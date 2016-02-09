@@ -20,8 +20,8 @@
 #define SYS_TIM_CLK     (Clk.APB1FreqHz)
 
 // ==== Different modules requirement ====
-#define I2C_REQUIRED    TRUE
-#define ADC_REQUIRED    FALSE
+#define I2C_REQUIRED            TRUE
+#define ADC_REQUIRED            FALSE
 #define SIMPLESENSORS_ENABLED   FALSE
 #define SEQUENCES_REQUIRED      FALSE
 
@@ -34,43 +34,26 @@
 
 // LED
 #define LED_GPIO        GPIOB
-#define LED_R_PIN       1
-#define LED_G_PIN       0
-#define LED_B_PIN       5
+#define LED_PIN         15
 
-// Button
-#define BTN_GPIO        GPIOA
-#define BTN_PIN         0
-
-// Vibro
-#define VIBRO_GPIO      GPIOB
-#define VIBRO_PIN       8
-
-// Acc
-#define ACC_I2C_GPIO    GPIOB
-#define ACC_I2C_SCL_PIN 10
-#define ACC_I2C_SDA_PIN 11
-#define ACC_DRDY_GPIO   GPIOB
-#define ACC_DRDY_PIN    15
-#define ACC_INT1_GPIO   GPIOB
-#define ACC_INT1_PIN    14
-#define ACC_IRQ_HANDLER VectorE0    // EXTI 10_15
+// Sns
+#define SNS_I2C_GPIO    GPIOB
+#define SNS_I2C_SCL_PIN 10
+#define SNS_I2C_SDA_PIN 11
 
 #endif // GPIO
 
 #if 1 // ========================= Timer =======================================
-#define VIBRO_TIM       TIM4
-#define VIBRO_CH        3
-
-#define LED_TIM         TIM3
-#define LED_R_CH        4
-#define LED_G_CH        3
-#define LED_B_CH        2
+// PWM
+#define PWM7_TIM        TIM4
+#define PWM8_TIM        TIM4
+#define PWM7_CH         3
+#define PWM8_CH         4
 
 #endif // Timer
 
 #if I2C_REQUIRED // ====================== I2C =================================
-#define I2C_ACC         I2C2
+#define I2C_SNS         I2C2
 #endif
 
 #if 1 // =========================== SPI =======================================
@@ -111,8 +94,8 @@
 #define UART_DMA_CHNL   0   // Dummy
 
 #if 1 // ==== I2C ====
-#define I2C_ACC_DMA_TX  STM32_DMA1_STREAM4
-#define I2C_ACC_DMA_RX  STM32_DMA1_STREAM5
+#define I2C_SNS_DMA_TX  STM32_DMA1_STREAM4
+#define I2C_SNS_DMA_RX  STM32_DMA1_STREAM5
 #endif
 
 #if ADC_REQUIRED

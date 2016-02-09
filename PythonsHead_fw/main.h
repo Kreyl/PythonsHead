@@ -11,7 +11,6 @@
 #include "kl_lib.h"
 #include "uart.h"
 #include "evt_mask.h"
-#include "board.h"
 
 #define APP_NAME                "Python's Head"
 #define APP_VERSION             __DATE__ " " __TIME__

@@ -5,14 +5,12 @@
  *      Author: kreyl
  */
 
-#ifndef RADIO_LVL1_H_
-#define RADIO_LVL1_H_
+#pragma once
 
-#include <kl_lib.h>
+#include "kl_lib.h"
 #include "ch.h"
 #include "rlvl1_defins.h"
 #include "cc1101.h"
-#include "kl_buf.h"
 
 class rLevel1_t {
 private:
@@ -26,9 +24,6 @@ public:
     uint8_t Init();
     // Inner use
     void ITask();
-//    rLevel1_t(): PThd(nullptr) Pkt({0}) {}
 };
 
 extern rLevel1_t Radio;
-
-#endif /* RADIO_LVL1_H_ */

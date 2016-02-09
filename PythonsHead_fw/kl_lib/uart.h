@@ -73,15 +73,11 @@ public:
     }
     void OnAHBFreqChange();
 #if UART_USE_DMA
-    void Printf(const char *S, ...);
-    void PrintfI(const char *S, ...);
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
-#else
+#endif
     void Printf(const char *S, ...);
     void PrintfI(const char *S, ...);
-#endif
     void PrintfNow(const char *S, ...);
-
     // Inner use
 #if UART_USE_DMA
     void IRQDmaTxHandler();

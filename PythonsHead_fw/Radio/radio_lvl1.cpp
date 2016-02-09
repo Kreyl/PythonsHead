@@ -12,6 +12,8 @@
 #include "uart.h"
 #include "board.h"
 
+#include "OmronD6Tt.h"
+
 #define DBG_PINS
 
 #ifdef DBG_PINS
@@ -37,81 +39,25 @@ static void rLvl1Thread(void *arg) {
 
 __NORETURN
 void rLevel1_t::ITask() {
-    __unused uint8_t OldID = 0;
     while(true) {
-        int8_t Rssi;
-        uint8_t RxRslt = CC.ReceiveSync(RX_T_MS, &Pkt, &Rssi);
-        if(RxRslt == OK) {
-            Uart.Printf("\rRssi=%d", Rssi);
-        }
-
-#if 0        // Demo
-        if(App.Mode == 0b0001) { // RX
-            int8_t Rssi;
-            Color_t Clr;
-            uint8_t RxRslt = CC.ReceiveSync(RX_T_MS, &Pkt, &Rssi);
-            if(RxRslt == OK) {
-                Uart.Printf("\rRssi=%d", Rssi);
-                Clr = clWhite;
-                if     (Rssi < -100) Clr = clRed;
-                else if(Rssi < -90) Clr = clYellow;
-                else if(Rssi < -80) Clr = clGreen;
-                else if(Rssi < -70) Clr = clCyan;
-                else if(Rssi < -60) Clr = clBlue;
-                else if(Rssi < -50) Clr = clMagenta;
+        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
+        if(Evt & EVT_NEW_SNS_DATA) {
+            // Copy data to pkt
+            Pkt.Time = chVTGetSystemTime();
+            Pkt.SnsData[0] = Sns.Data.Temperature;
+            for(uint8_t i=0; i<8; i++) {
+                Pkt.SnsData[i+1] = Sns.Data.Pix[i];
             }
-            else Clr = clBlack;
-            Led.SetColor(Clr);
-            chThdSleepMilliseconds(99);
-        }
-        else {  // TX
-            DBG1_SET();
-            CC.TransmitSync(&Pkt);
-            DBG1_CLR();
-//            chThdSleepMilliseconds(99);
-        }
-//#else
-#endif
-
-#if 0
-        // ==== Transmitter ====
-        if(App.MustTransmit) {
-            if(App.ID != OldID) {
-                OldID = App.ID;
-                CC.SetChannel(ID2RCHNL(App.ID));
-                Pkt.DWord = App.ID;
-            }
+            // Transmit
             DBG1_SET();
             CC.TransmitSync(&Pkt);
             DBG1_CLR();
         }
-
-        // ==== Receiver ====
-        else {
-            DBG2_SET();
-            // Listen if nobody found, and do not if found
-            int8_t Rssi;
-            // Iterate channels
-            for(int32_t i = ID_MIN; i <= ID_MAX; i++) {
-                if(i == App.ID) continue;   // Do not listen self
-                CC.SetChannel(ID2RCHNL(i));
-                uint8_t RxRslt = CC.ReceiveSync(RX_T_MS, &Pkt, &Rssi);
-                if(RxRslt == OK) {
-//                    Uart.Printf("\rCh=%d; Rssi=%d", i, Rssi);
-                    App.SignalEvt(EVTMSK_SOMEONE_NEAR);
-                    break; // No need to listen anymore if someone already found
-                }
-            } // for
-            CC.SetChannel(ID2RCHNL(App.ID));    // Set self channel back
-            DBG2_CLR();
-            TryToSleep(RX_SLEEP_T_MS);
-        }
-#endif
     } // while true
 }
 #endif // task
 
-#if 1 // ============================
+#if 1 // ============================ Init =====================================
 uint8_t rLevel1_t::Init() {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
