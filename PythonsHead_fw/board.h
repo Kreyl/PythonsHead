@@ -36,6 +36,11 @@
 #define LED_GPIO        GPIOB
 #define LED_PIN         15
 
+// Outputs
+#define PWM_GPIO        GPIOB
+#define PWM7_PIN        8
+#define PWM8_PIN        9
+
 // Sns
 #define SNS_I2C_GPIO    GPIOB
 #define SNS_I2C_SCL_PIN 10

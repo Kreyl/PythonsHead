@@ -626,7 +626,7 @@ public:
 };
 
 // ==== PWM output ====
-// Example: PinOutputPWM_t<LED_TOP_VALUE, LED_INVERTED_PWM> IChnl({GPIOB, 15, TIM11, 1});
+// Example: PinOutputPWM_t<LED_TOP_VALUE, LED_INVERTED_PWM, omPushPull> IChnl({GPIOB, 15, TIM11, 1});
 template <uint32_t TopValue, Inverted_t Inverted, PinOutMode_t OutputType>
 class PinOutputPWM_t : private Timer_t {
 private:
