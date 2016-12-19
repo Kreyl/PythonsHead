@@ -10,7 +10,7 @@ namespace PythonControl {
     };
 
     public partial class MainForm : Form {
-        private Transmitter_t Transmitter;
+        private Periphery_t Periph;
         private int TTop = 45, TBottom = 18;
         private int FreqTop = 36, FreqBottom = 1;
         private byte ChnlMsk = 0xF7;
@@ -19,7 +19,7 @@ namespace PythonControl {
         #region ============================= Init / deinit ============================
         public MainForm() {
             InitializeComponent();
-            Transmitter = new Transmitter_t() {
+            Periph = new Periphery_t() {
                 ComPort = serialPort1
             };
             CmdQ = new CmdQ_t();
@@ -43,22 +43,30 @@ namespace PythonControl {
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             timerHeartBeat.Enabled = false;
             try {
-                Transmitter.ComPort.Close();
-                Transmitter.ComPort = null;
+                Periph.ComPort.Close();
+                Periph.ComPort = null;
                 serialPort1.Dispose();
             }
             catch(System.Exception ex) {
-                Transmitter.LastError = ex.Message;
+                Periph.LastError = ex.Message;
             }
-            Transmitter.IsConnected = false;
+            Periph.TransmitterConnected = false;
         }
         #endregion
 
         #region ============================= Events ============================
-        private void IndicateFailure() {
-            if(Transmitter.IsConnected) {
+        private void ProcessState() {
+            if(Periph.TransmitterConnected) {
+                StatusLabel.Text = "Передатчик подключен";
                 lblPythonReplying.Visible = true;  // Transmitter connected, but no reply
-                lblPythonReplying.Text = "Питон не отвечает";
+                if(Periph.PythonOnline) {
+                    lblPythonReplying.Text = "Питон на связи";
+                    timerHeartBeat.Interval = 100;
+                }
+                else {
+                    lblPythonReplying.Text = "Питон не отвечает";
+                    timerHeartBeat.Interval = 1000;
+                }
             }
             else {  // Transmitter disconnected
                 lblPythonReplying.Visible = false;
@@ -69,70 +77,50 @@ namespace PythonControl {
 
         private void TimerHeartBeat_Tick(object sender, EventArgs e) {
             // Check if device connected
-            if(Transmitter.IsConnected) {
+            if(Periph.TransmitterConnected) {
                 // Send commands until q is empty
                 while(CmdQ.Get(out string Cmd)) {
-                    if(Transmitter.SendCmd(Cmd) == false) { // Some failure
-                        IndicateFailure();
-                        return;
-                    }
+                    if(Periph.SendCmd(Cmd) == false) goto EndOfTick; // Some failure
                 }
                 // Q is empty, Request info
-                if(Transmitter.GetInfo()) {
+                if(Periph.GetInfo()) {
                     // Show reply
                     for(int i=0; i<8; i++) {
-                        int src = Transmitter.LastT[i + 1];
+                        int src = Periph.LastT[i + 1];
                         chart1.Series[0].Points[i].YValues[0] = (float)src / 10;
                     }
                     chart1.Refresh();
-                    // Show that it is ok
-                    if(!lblPythonReplying.Visible) {
-                        lblPythonReplying.Visible = true;
-                        lblPythonReplying.Text = "Питон на связи";
-                        timerHeartBeat.Interval = 100;
-                    }
                 }
-                else { // Some failure
-                    IndicateFailure();
-                }
-            } //if is connected
+            } //if connected
             // Not connected, try to connect
             else { 
-                try {
-                    serialPort1.Close();
-                }
+                try { serialPort1.Close(); }
                 catch { }
                 // First, get port names
                 string[] SPorts = System.IO.Ports.SerialPort.GetPortNames();
                 int NPorts = SPorts.Length;
-                if(NPorts == 0) {
-                    StatusLabel.Text = "Передатчик не подключен";
-                    //labelHelp.Text = "В системе нет ни одного последовательного порта. Если стенд подключен, то, вероятно, не установлены драйверы USB-Serial.";
-                }
-                else {
+                if(NPorts != 0) {
                     // Iterate all discovered ports
                     for(int i = 0; i < NPorts; i++) {
                         serialPort1.PortName = SPorts[i];
                         try {
                             serialPort1.Open();
                             // Try to ping device
-                            if(Transmitter.Ping()) { // Device found
-                                Transmitter.IsConnected = true;
-                                StatusLabel.Text = "Передатчик подключен";
-                                return; // All right, nothing to do here
-                            }
+                            if(Periph.PingTransmitter()) goto EndOfTick; // Device found
                             else serialPort1.Close(); // Try next port
                         } // try
-                        catch {
-                            serialPort1.Close();
-                        }
+                        catch { serialPort1.Close(); }
                     } //for
                     // Silence answers our cries
                     //labelHelp.Text = "Ни на одном из имеющихся в системе последовательных портов стенд не обнаружен.";
-                    StatusLabel.Text = "Передатчик не подключен";
                     //StatusLabel.Image = imageList1.Images[1];
                 } // if(NPorts != 0) 
-            } //else
+                else { 
+                    //labelHelp.Text = "В системе нет ни одного последовательного порта. Если стенд подключен, то, вероятно, не установлены драйверы USB-Serial.";
+                }
+            } // not connected
+            EndOfTick:
+            ProcessState();
         } //timerHeartBeat_Tick
 
         // ==== Checkboxes ====
@@ -155,13 +143,12 @@ namespace PythonControl {
             if(IsOn) ChnlMsk |= Msk;
             else ChnlMsk &= (byte)~Msk;
             // Send command
-            if(Transmitter.IsConnected) {
+            if(Periph.TransmitterConnected && Periph.PythonOnline) {
                 CmdQ.Put(CmdSetParam(ParamIDs.SetChannels, ChnlMsk));
             }
             // Change color
             if(IsOn) chart1.Series[0].Points[Channel - 1].Color = SystemColors.Highlight;
             else chart1.Series[0].Points[Channel - 1].Color = SystemColors.InactiveCaption;
-
         }
 
         #region ==== Top/Bottom temperature selection ====
@@ -169,7 +156,7 @@ namespace PythonControl {
             if(Int32.TryParse(txtbTTopLeds.Text, out int NewT)) {
                 if(NewT > TBottom) {
                     // Send command
-                    if(Transmitter.IsConnected) {
+                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
                         CmdQ.Put(CmdSetParam(ParamIDs.SetTTop, NewT));
                     }
                     // Change chart
@@ -183,7 +170,7 @@ namespace PythonControl {
             if(Int32.TryParse(txtbTBottomLeds.Text, out int NewT)) {
                 if(NewT < TTop) {
                     // Send command
-                    if(Transmitter.IsConnected) {
+                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
                         CmdQ.Put(CmdSetParam(ParamIDs.SetTBottom, NewT));
                     }
                     // Change chart
@@ -207,7 +194,7 @@ namespace PythonControl {
             if(Int32.TryParse(txtbTopBlinkFreq.Text, out int NewF)) {
                 if(NewF > FreqBottom) {
                     // Send command
-                    if(Transmitter.IsConnected) {
+                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
                         CmdQ.Put(CmdSetParam(ParamIDs.SetBlinkFTop, NewF));
                     }
                     // Change variable
@@ -220,7 +207,7 @@ namespace PythonControl {
             if(Int32.TryParse(txtbBottomBlinkFreq.Text, out int NewF)) {
                 if(NewF < FreqTop) {
                     // Send command
-                    if(Transmitter.IsConnected) {
+                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
                         CmdQ.Put(CmdSetParam(ParamIDs.SetBlinkFBottom, NewF));
                     }
                     // Change variable
@@ -243,7 +230,7 @@ namespace PythonControl {
 
 
     #region ========================= Classes =========================
-    public class Transmitter_t {
+    public class Periphery_t {
         // ==== Private ====
         bool SendAndGetReply(string SCmd, out string SReply) {
             SReply = "";
@@ -255,7 +242,7 @@ namespace PythonControl {
                 return true;
             }
             catch(Exception ex) {
-                IsConnected = false;
+                TransmitterConnected = false;
                 LastError = ex.Message;
                 try {
                     ComPort.Close();
@@ -268,27 +255,23 @@ namespace PythonControl {
         }
 
         // ==== Public ====
-        public bool IsConnected;
+        public bool TransmitterConnected = false, PythonOnline = false;
         public System.IO.Ports.SerialPort ComPort;
-        public string LastError;
-
-        public Transmitter_t() {
-            IsConnected = false;
-            LastError = "";
-        }
+        public string LastError = "";
 
         // ==== Commands ====
-        public bool Ping() {
+        public bool PingTransmitter() {
             if(SendAndGetReply("Ping", out string SReply)) {
-                return SReply.Equals("Ack 0", StringComparison.OrdinalIgnoreCase);
+                TransmitterConnected = SReply.Equals("Ack 0", StringComparison.OrdinalIgnoreCase);
+                return TransmitterConnected;
             }
             else return false;
         }
 
         public bool SendCmd(string SCmd) {
-            //string SCmd = "SetParam " + Cmd.Cmd.ToString() + ' ' + Cmd.Data1.ToString() + ' ' + Cmd.Data2.ToString() + "\r\n";
             if(SendAndGetReply(SCmd, out string SReply)) {
-                return SReply.Equals("Ack 0", StringComparison.OrdinalIgnoreCase);
+                PythonOnline = SReply.Equals("Ack 0", StringComparison.OrdinalIgnoreCase);
+                return PythonOnline;
             }
             else return false;
         }
@@ -297,12 +280,17 @@ namespace PythonControl {
         public bool GetInfo() {
             if(SendAndGetReply("GetInfo", out string SReply)) {
                 string[] Tokens = SReply.Split(new Char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if(Tokens[0].Equals("Info", StringComparison.OrdinalIgnoreCase) && Tokens.Length == 9) {
+                // Will receive either Info, or not Info. In last case, python is not online.
+                PythonOnline = (Tokens[0].Equals("Info", StringComparison.OrdinalIgnoreCase) && Tokens.Length == 9);    // "Info" and 8 numbers
+                if(PythonOnline) {
                     for(int i = 1; i <= 8; i++) {
-                        if(!int.TryParse(Tokens[i], out LastT[i])) return false;    // parse failed
-                    }
+                        if(!int.TryParse(Tokens[i], out LastT[i])) {
+                            PythonOnline = false;
+                            return false;    // parse failed
+                        }
+                    } // for
                     return true;    // everything parsed properly
-                }
+                } // if online
             }
             return false;
         }
