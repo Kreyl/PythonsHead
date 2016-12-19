@@ -24,16 +24,16 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint9 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(1D, 27D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint10 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(2D, 20D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint11 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(3D, 18D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint12 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 27D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint13 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(5D, 27D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint14 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(6D, 29D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint15 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(7D, 36D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint16 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(8D, 27D);
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint1 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(1D, 27D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint2 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(2D, 20D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint3 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(3D, 18D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 27D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint5 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(5D, 27D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint6 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(6D, 29D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint7 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(7D, 36D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint8 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(8D, 27D);
             this.gbLeds = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnBottomBlinkFreq = new System.Windows.Forms.Button();
@@ -109,6 +109,7 @@
             this.btnBottomBlinkFreq.TabIndex = 12;
             this.btnBottomBlinkFreq.Text = "Ok";
             this.btnBottomBlinkFreq.UseVisualStyleBackColor = true;
+            this.btnBottomBlinkFreq.Click += new System.EventHandler(this.BtnBottomBlinkFreq_Click);
             // 
             // btnTopBlinkFreq
             // 
@@ -120,6 +121,7 @@
             this.btnTopBlinkFreq.TabIndex = 11;
             this.btnTopBlinkFreq.Text = "Ok";
             this.btnTopBlinkFreq.UseVisualStyleBackColor = true;
+            this.btnTopBlinkFreq.Click += new System.EventHandler(this.BtnTopBlinkFreq_Click);
             // 
             // txtbBottomBlinkFreq
             // 
@@ -129,6 +131,7 @@
             this.txtbBottomBlinkFreq.TabIndex = 9;
             this.txtbBottomBlinkFreq.Text = "4";
             this.txtbBottomBlinkFreq.WordWrap = false;
+            this.txtbBottomBlinkFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbBottomBlinkFreq_KeyPress);
             // 
             // label3
             // 
@@ -147,6 +150,7 @@
             this.txtbTopBlinkFreq.Size = new System.Drawing.Size(49, 20);
             this.txtbTopBlinkFreq.TabIndex = 8;
             this.txtbTopBlinkFreq.Text = "36";
+            this.txtbTopBlinkFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbTopBlinkFreq_KeyPress);
             // 
             // label4
             // 
@@ -182,7 +186,7 @@
             this.btnTBottomLeds.TabIndex = 11;
             this.btnTBottomLeds.Text = "Ok";
             this.btnTBottomLeds.UseVisualStyleBackColor = true;
-            this.btnTBottomLeds.Click += new System.EventHandler(this.btnTBottomLeds_Click);
+            this.btnTBottomLeds.Click += new System.EventHandler(this.BtnTBottomLeds_Click);
             // 
             // btnTTopLeds
             // 
@@ -194,7 +198,7 @@
             this.btnTTopLeds.TabIndex = 10;
             this.btnTTopLeds.Text = "Ok";
             this.btnTTopLeds.UseVisualStyleBackColor = true;
-            this.btnTTopLeds.Click += new System.EventHandler(this.btnTTopLeds_Click);
+            this.btnTTopLeds.Click += new System.EventHandler(this.BtnTTopLeds_Click);
             // 
             // txtbTBottomLeds
             // 
@@ -204,6 +208,7 @@
             this.txtbTBottomLeds.TabIndex = 9;
             this.txtbTBottomLeds.Text = "18";
             this.txtbTBottomLeds.WordWrap = false;
+            this.txtbTBottomLeds.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbTBottomLeds_KeyPress);
             // 
             // label2
             // 
@@ -222,6 +227,7 @@
             this.txtbTTopLeds.Size = new System.Drawing.Size(49, 20);
             this.txtbTTopLeds.TabIndex = 8;
             this.txtbTTopLeds.Text = "45";
+            this.txtbTTopLeds.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbTTopLeds_KeyPress);
             // 
             // label1
             // 
@@ -252,35 +258,35 @@
             // 
             // chart1
             // 
-            chartArea2.AxisX.LabelStyle.Enabled = false;
-            chartArea2.AxisX.Maximum = 9D;
-            chartArea2.AxisX.Minimum = 0D;
-            chartArea2.AxisY.Maximum = 45D;
-            chartArea2.AxisY.Minimum = 15D;
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
+            chartArea1.AxisX.LabelStyle.Enabled = false;
+            chartArea1.AxisX.Maximum = 9D;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisY.Maximum = 45D;
+            chartArea1.AxisY.Minimum = 15D;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.chart1.Location = new System.Drawing.Point(3, 39);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.Name = "Series1";
-            dataPoint9.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint10.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint11.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint12.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint13.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint14.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint15.Color = System.Drawing.SystemColors.Highlight;
-            dataPoint16.Color = System.Drawing.SystemColors.Highlight;
-            series2.Points.Add(dataPoint9);
-            series2.Points.Add(dataPoint10);
-            series2.Points.Add(dataPoint11);
-            series2.Points.Add(dataPoint12);
-            series2.Points.Add(dataPoint13);
-            series2.Points.Add(dataPoint14);
-            series2.Points.Add(dataPoint15);
-            series2.Points.Add(dataPoint16);
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.Name = "Series1";
+            dataPoint1.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint2.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint3.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint4.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint5.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint6.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint7.Color = System.Drawing.SystemColors.Highlight;
+            dataPoint8.Color = System.Drawing.SystemColors.Highlight;
+            series1.Points.Add(dataPoint1);
+            series1.Points.Add(dataPoint2);
+            series1.Points.Add(dataPoint3);
+            series1.Points.Add(dataPoint4);
+            series1.Points.Add(dataPoint5);
+            series1.Points.Add(dataPoint6);
+            series1.Points.Add(dataPoint7);
+            series1.Points.Add(dataPoint8);
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(399, 300);
             this.chart1.TabIndex = 8;
             this.chart1.Text = "chart1";
@@ -412,6 +418,10 @@
             this.lblPythonReplying.Size = new System.Drawing.Size(109, 17);
             this.lblPythonReplying.Text = "Питон не отвечает";
             this.lblPythonReplying.Visible = false;
+            // 
+            // serialPort1
+            // 
+            this.serialPort1.ReadTimeout = 540;
             // 
             // timerHeartBeat
             // 
