@@ -38,6 +38,12 @@
 
 // Outputs
 #define PWM_GPIO        GPIOB
+#define PWM1_PIN        4
+#define PWM2_PIN        5
+#define PWM3_PIN        0
+#define PWM4_PIN        1
+#define PWM5_PIN        6
+#define PWM6_PIN        7
 #define PWM7_PIN        8
 #define PWM8_PIN        9
 
@@ -50,8 +56,20 @@
 
 #if 1 // ========================= Timer =======================================
 // PWM
+#define PWM1_TIM        TIM3
+#define PWM2_TIM        TIM3
+#define PWM3_TIM        TIM3
+#define PWM4_TIM        TIM3
+#define PWM5_TIM        TIM4
+#define PWM6_TIM        TIM4
 #define PWM7_TIM        TIM4
 #define PWM8_TIM        TIM4
+#define PWM1_CH         1
+#define PWM2_CH         2
+#define PWM3_CH         3
+#define PWM4_CH         4
+#define PWM5_CH         1
+#define PWM6_CH         2
 #define PWM7_CH         3
 #define PWM8_CH         4
 
