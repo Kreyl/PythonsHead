@@ -2,3 +2,7 @@ PythonsHead_hw/PythonsHead.dsn
 PythonsHead_hw/PythonsHead.kicad_pcb-bak
 PythonsHead_hw/PythonsHead.ses
 PythonsHead_hw/_autosave-PythonsHead.kicad_pcb
+Python_sw/PythonControl/bin/
+Python_sw/PythonControl/obj/Debug/PythonControl.MainForm.resources
+Python_sw/PythonControl/obj/
+PythonsHead_fw/.settings/language.settings.xml
