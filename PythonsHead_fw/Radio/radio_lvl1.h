@@ -13,6 +13,8 @@
 #include "kl_buf.h"
 #include "uart.h"
 
+#include "OmronD6Tt.h"
+
 #if 0 // ========================= Signal levels ===============================
 // Python translation for db
 #define RX_LVL_TOP      1000
@@ -60,7 +62,7 @@ union rPkt_t  {
     struct {
         uint8_t Cmd;
         union {
-            int16_t t[8];   // Temperature
+            int16_t t[SNS_T_CNT];   // Temperature
             struct {
                 uint8_t Data1;
                 uint8_t Data2;

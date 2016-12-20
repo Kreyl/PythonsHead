@@ -118,6 +118,11 @@ static T Average(T *p, uint32_t Len) {
     return Rslt;
 }
 
+template <typename T>
+static inline T Proportion(T MinX, T MaxX, T MinY, T MaxY, T x) {
+    return (((x - MaxX) * (MaxY - MinY)) / (MaxX - MinX)) + MaxY;
+}
+
 #define ANY_OF_2(a, b1, b2)             (((a)==(b1)) or ((a)==(b2)))
 #define ANY_OF_3(a, b1, b2, b3)         (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)))
 #define ANY_OF_4(a, b1, b2, b3, b4)     (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)))

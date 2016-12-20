@@ -10,9 +10,11 @@
 #include "kl_lib.h"
 #include "kl_i2c.h"
 
+#define SNS_T_CNT   8
+
 struct SnsData_t {
     int16_t Temperature;
-    int16_t Pix[8];
+    int16_t Pix[SNS_T_CNT];
     uint8_t Pec;
 };
 #define SNS_DATA_SZ     sizeof(SnsData_t)

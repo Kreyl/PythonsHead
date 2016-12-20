@@ -59,29 +59,6 @@ void rLevel1_t::ITask() {
 //        chThdSleepMilliseconds(999);
     }
 }
-
-
-//void rLevel1_t::TryToReceive(uint32_t RxDuration) {
-//    systime_t TotalDuration_st = MS2ST(RxDuration);
-//    systime_t TimeStart = chVTGetSystemTimeX();
-//    systime_t RxDur_st = TotalDuration_st;
-//    while(true) {
-//        uint8_t RxRslt = CC.Receive_st(RxDur_st, &PktRx, &Rssi);
-//        if(RxRslt == OK) {
-////            Uart.Printf("\rRID = %X", PktRx.DWord);
-//            Uart.Printf("OtherRssi=%d\r", Rssi);
-//            if(Rssi > RSSI_MIN) {
-//                chSysLock();
-//                RxTable.AddId(PktRx.DWord32);
-//                chSysUnlock();
-//            }
-//        }
-//        // Check if repeat or get out
-//        systime_t Elapsed_st = chVTTimeElapsedSinceX(TimeStart);
-//        if(Elapsed_st >= TotalDuration_st) break;
-//        else RxDur_st = TotalDuration_st - Elapsed_st;
-//    }
-//}
 #endif // task
 
 #if 1 // ============================
