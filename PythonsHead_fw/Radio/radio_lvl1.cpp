@@ -42,15 +42,19 @@ __noreturn
 void rLevel1_t::ITask() {
     while(true) {
         // Receive cmd
-        uint8_t RxRslt = CC.Receive(999, &PktRx, &Rssi);
+        uint8_t RxRslt = CC.Receive(36, &PktRx, &Rssi);
         if(RxRslt == OK) {
-            Uart.Printf("Rssi=%d\r", Rssi);
+//            Uart.Printf("Rssi=%d\r", Rssi);
             // Process cmd
             if(PktRx.Cmd == 0) {    // GetInfo
                 PktInfoTx.Cmd = 0;
                 CC.Transmit(&PktInfoTx);
             }
-
+            else if(PktRx.Cmd == 1) {   // Set param
+                PktTx.Cmd = PktRx.Cmd;
+                PktTx.Result = App.SetParam(PktRx.Data1, PktRx.Data2);
+                CC.Transmit(&PktTx);
+            }
         } // if ok
 //        chThdSleepMilliseconds(999);
     }

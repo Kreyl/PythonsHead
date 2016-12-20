@@ -78,7 +78,7 @@ union rPkt_t  {
 
 class rLevel1_t {
 private:
-    rPkt_t PktRx;
+    rPkt_t PktRx, PktTx;
 public:
     thread_reference_t ThdRef;
     rPkt_t PktInfoTx;

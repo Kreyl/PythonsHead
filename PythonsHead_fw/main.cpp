@@ -90,6 +90,11 @@ void App_t::ITask() {
     } // while true
 }
 
+uint8_t App_t::SetParam(uint8_t ParamID, uint8_t Value) {
+    Uart.Printf("Param %u, v %u", ParamID, Value);
+    return OK;
+}
+
 
 void CalculatePWM() {
     // Copy data to local buf
