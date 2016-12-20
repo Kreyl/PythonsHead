@@ -41,7 +41,18 @@ static void rLvl1Thread(void *arg) {
 __noreturn
 void rLevel1_t::ITask() {
     while(true) {
-        chThdSleepMilliseconds(999);
+        // Receive cmd
+        uint8_t RxRslt = CC.Receive(999, &PktRx, &Rssi);
+        if(RxRslt == OK) {
+            Uart.Printf("Rssi=%d\r", Rssi);
+            // Process cmd
+            if(PktRx.Cmd == 0) {    // GetInfo
+                PktInfoTx.Cmd = 0;
+                CC.Transmit(&PktInfoTx);
+            }
+
+        } // if ok
+//        chThdSleepMilliseconds(999);
     }
 }
 

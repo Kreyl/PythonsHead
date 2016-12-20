@@ -79,9 +79,9 @@ void App_t::ITask() {
             chSysUnlock();
 
 //            chEvtSignal(Radio.PThd, EVT_NEW_SNS_DATA);
-            Uart.Printf("%03d ", Sns.Data.Temperature);
-            for(uint8_t i=0; i<8; i++) Uart.Printf("%03d ", Sns.Data.Pix[i]);
-            Uart.Printf("\r\n");
+//            Uart.Printf("%03d ", Sns.Data.Temperature);
+//            for(uint8_t i=0; i<8; i++) Uart.Printf("%03d ", Sns.Data.Pix[i]);
+//            Uart.Printf("\r\n");
 //            CalculatePWM();
         }
         else Sns.Restart();
