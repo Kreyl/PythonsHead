@@ -7,27 +7,24 @@
 
 #include "main.h"
 #include "board.h"
-#include "clocking.h"
 #include "radio_lvl1.h"
 #include "OmronD6Tt.h"
 
 App_t App;
 
-const PinOutput_t Led {LED_GPIO, LED_PIN};
+const PinOutput_t Led {LED_GPIO, LED_PIN, omPushPull};
 
 #define PWM_TOP     255
 
-
-
-PinOutputPWM_t<PWM_TOP, invNotInverted, omPushPull> Out[8] = {
-        {PWM_GPIO, PWM1_PIN, PWM1_TIM, PWM1_CH},
-        {PWM_GPIO, PWM2_PIN, PWM2_TIM, PWM2_CH},
-        {PWM_GPIO, PWM3_PIN, PWM3_TIM, PWM3_CH},
-        {PWM_GPIO, PWM4_PIN, PWM4_TIM, PWM4_CH},
-        {PWM_GPIO, PWM5_PIN, PWM5_TIM, PWM5_CH},
-        {PWM_GPIO, PWM6_PIN, PWM6_TIM, PWM6_CH},
-        {PWM_GPIO, PWM7_PIN, PWM7_TIM, PWM7_CH},
-        {PWM_GPIO, PWM8_PIN, PWM8_TIM, PWM8_CH},
+PinOutputPWM_t Out[8] = {
+        {PWM_GPIO, PWM1_PIN, PWM1_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM2_PIN, PWM2_TIM, PWM2_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM3_PIN, PWM3_TIM, PWM3_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM4_PIN, PWM4_TIM, PWM4_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM5_PIN, PWM5_TIM, PWM5_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM6_PIN, PWM6_TIM, PWM6_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM7_PIN, PWM7_TIM, PWM7_CH, invNotInverted, omPushPull, PWM_TOP},
+        {PWM_GPIO, PWM8_PIN, PWM8_TIM, PWM8_CH, invNotInverted, omPushPull, PWM_TOP},
 };
 
 static void CalculatePWM();
@@ -48,22 +45,22 @@ int main(void) {
     Uart.Printf("\r%S %S\r", APP_NAME, APP_VERSION);
     Clk.PrintFreqs();
 
-    Led.Init(omPushPull);
-    Led.Hi();
+    Led.Init();
+    Led.SetHi();
     // PWM
     for(uint8_t i=0; i<8; i++) {
         Out[i].Init();
         Out[i].Set(18);
     }
 
-    Sns.Init();
+    i2c2.Init();    // Sns uses it
 
     if(Radio.Init() != OK) {
-        for(int i=0; i<11; i++) {
+        for(int i=0; i<18; i++) {
             Led.Toggle();
             chThdSleepMilliseconds(99);
         }
-        Led.Lo();
+        Led.SetLo();
     }
 
     // Main cycle
@@ -73,16 +70,22 @@ int main(void) {
 __attribute__ ((__noreturn__))
 void App_t::ITask() {
     while(true) {
-        Led.Lo();
+        Led.SetLo();
         if(Sns.ReadData() == OK) {
-            chEvtSignal(Radio.PThd, EVT_NEW_SNS_DATA);
+            // Copy data for transmitting
+            chSysLock();
+            Radio.PktInfoTx.Cmd = 0;    // 0 means GetInfo
+            for(uint8_t i=0; i<8; i++) Radio.PktInfoTx.t[i] = Sns.Data.Pix[i];
+            chSysUnlock();
+
+//            chEvtSignal(Radio.PThd, EVT_NEW_SNS_DATA);
             Uart.Printf("%03d ", Sns.Data.Temperature);
             for(uint8_t i=0; i<8; i++) Uart.Printf("%03d ", Sns.Data.Pix[i]);
             Uart.Printf("\r\n");
-            CalculatePWM();
+//            CalculatePWM();
         }
         else Sns.Restart();
-        Led.Hi();
+        Led.SetHi();
         chThdSleepMilliseconds(180);
     } // while true
 }

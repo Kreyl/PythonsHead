@@ -10,64 +10,76 @@
 #include "main.h"
 #include "cc1101.h"
 #include "uart.h"
-#include "board.h"
+//#include "led.h"
 
-#include "OmronD6Tt.h"
-
-#define DBG_PINS
+//#define DBG_PINS
 
 #ifdef DBG_PINS
 #define DBG_GPIO1   GPIOB
-#define DBG_PIN1    12
+#define DBG_PIN1    4
 #define DBG1_SET()  PinSet(DBG_GPIO1, DBG_PIN1)
 #define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
 #define DBG_GPIO2   GPIOB
-#define DBG_PIN2    13
+#define DBG_PIN2    9
 #define DBG2_SET()  PinSet(DBG_GPIO2, DBG_PIN2)
 #define DBG2_CLR()  PinClear(DBG_GPIO2, DBG_PIN2)
+#else
+#define DBG1_SET()
+#define DBG1_CLR()
 #endif
 
 rLevel1_t Radio;
 
 #if 1 // ================================ Task =================================
 static THD_WORKING_AREA(warLvl1Thread, 256);
-__NORETURN
+__noreturn
 static void rLvl1Thread(void *arg) {
     chRegSetThreadName("rLvl1");
     Radio.ITask();
 }
 
-__NORETURN
+__noreturn
 void rLevel1_t::ITask() {
     while(true) {
-        __unused eventmask_t Evt = chEvtWaitAny(ALL_EVENTS);
-        if(Evt & EVT_NEW_SNS_DATA) {
-            // Copy data to pkt
-            Pkt.Time = chVTGetSystemTime();
-            Pkt.SnsData[0] = Sns.Data.Temperature;
-            for(uint8_t i=0; i<8; i++) {
-                Pkt.SnsData[i+1] = Sns.Data.Pix[i];
-            }
-            // Transmit
-            DBG1_SET();
-            CC.TransmitSync(&Pkt);
-            DBG1_CLR();
-        }
-    } // while true
+        chThdSleepMilliseconds(999);
+    }
 }
+
+
+//void rLevel1_t::TryToReceive(uint32_t RxDuration) {
+//    systime_t TotalDuration_st = MS2ST(RxDuration);
+//    systime_t TimeStart = chVTGetSystemTimeX();
+//    systime_t RxDur_st = TotalDuration_st;
+//    while(true) {
+//        uint8_t RxRslt = CC.Receive_st(RxDur_st, &PktRx, &Rssi);
+//        if(RxRslt == OK) {
+////            Uart.Printf("\rRID = %X", PktRx.DWord);
+//            Uart.Printf("OtherRssi=%d\r", Rssi);
+//            if(Rssi > RSSI_MIN) {
+//                chSysLock();
+//                RxTable.AddId(PktRx.DWord32);
+//                chSysUnlock();
+//            }
+//        }
+//        // Check if repeat or get out
+//        systime_t Elapsed_st = chVTTimeElapsedSinceX(TimeStart);
+//        if(Elapsed_st >= TotalDuration_st) break;
+//        else RxDur_st = TotalDuration_st - Elapsed_st;
+//    }
+//}
 #endif // task
 
-#if 1 // ============================ Init =====================================
+#if 1 // ============================
 uint8_t rLevel1_t::Init() {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
     PinSetupOut(DBG_GPIO2, DBG_PIN2, omPushPull);
-#endif
-    // Init radioIC
+#endif    // Init radioIC
     if(CC.Init() == OK) {
-        CC.SetTxPower(CC_Pwr0dBm);
+        CC.SetTxPower(CC_PwrPlus5dBm);
         CC.SetPktSize(RPKT_LEN);
-
+        CC.SetChannel(3);
+//        CC.EnterPwrDown();
         // Thread
         PThd = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, (tfunc_t)rLvl1Thread, NULL);
         return OK;

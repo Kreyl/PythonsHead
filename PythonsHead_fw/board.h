@@ -10,17 +10,21 @@
 #include <inttypes.h>
 
 // ==== General ====
-#define BOARD_NAME          "Locket3"
+#define BOARD_NAME          "PythonHead"
 // MCU type as defined in the ST header.
 #define STM32L151xB
 
 // Freq of external crystal if any. Leave it here even if not used.
 #define CRYSTAL_FREQ_HZ 12000000
 
-#define SYS_TIM_CLK     (Clk.APB1FreqHz)
+// OS timer settings
+#define STM32_ST_IRQ_PRIORITY   2
+#define STM32_ST_USE_TIMER      2
+#define SYS_TIM_CLK             (Clk.APB1FreqHz)
 
 // ==== Different modules requirement ====
-#define I2C_REQUIRED            TRUE
+#define I2C1_ENABLED            FALSE
+#define I2C2_ENABLED            TRUE
 #define ADC_REQUIRED            FALSE
 #define SIMPLESENSORS_ENABLED   FALSE
 #define SEQUENCES_REQUIRED      FALSE
@@ -47,10 +51,26 @@
 #define PWM7_PIN        8
 #define PWM8_PIN        9
 
-// Sns
-#define SNS_I2C_GPIO    GPIOB
-#define SNS_I2C_SCL_PIN 10
-#define SNS_I2C_SDA_PIN 11
+// I2C
+#define I2C1_GPIO       GPIOB
+#define I2C1_SCL        6
+#define I2C1_SDA        7
+#define I2C2_GPIO       GPIOB
+#define I2C2_SCL        10
+#define I2C2_SDA        11
+// I2C Alternate Function
+#define I2C_AF          AF4
+
+// Radio
+#define CC_GPIO         GPIOA
+#define CC_GDO2         2
+#define CC_GDO0         3
+#define CC_SCK          5
+#define CC_MISO         6
+#define CC_MOSI         7
+#define CC_CS           1
+// Input pin (do not touch)
+#define CC_GDO0_IRQ     { CC_GPIO, CC_GDO0, pudNone }
 
 #endif // GPIO
 
@@ -75,11 +95,9 @@
 
 #endif // Timer
 
-#if I2C_REQUIRED // ====================== I2C =================================
-#define I2C_SNS         I2C2
-#endif
-
 #if 1 // =========================== SPI =======================================
+#define CC_SPI          SPI1
+#define CC_SPI_AF       AF5
 #endif
 
 #if 1 // ========================== USART ======================================
@@ -117,8 +135,8 @@
 #define UART_DMA_CHNL   0   // Dummy
 
 #if 1 // ==== I2C ====
-#define I2C_SNS_DMA_TX  STM32_DMA1_STREAM4
-#define I2C_SNS_DMA_RX  STM32_DMA1_STREAM5
+#define I2C2_DMA_TX     STM32_DMA1_STREAM4
+#define I2C2_DMA_RX     STM32_DMA1_STREAM5
 #endif
 
 #if ADC_REQUIRED
