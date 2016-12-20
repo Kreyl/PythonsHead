@@ -6,7 +6,8 @@ namespace PythonControl {
     public enum ParamIDs { 
         SetChannels = 0,
         SetTTop = 1, SetTBottom = 2,
-        SetBlinkFTop = 3, SetBlinkFBottom = 4,
+        SetLedsTop = 3, SetLedsBottom = 4,
+        SetFreq = 5,
     };
 
     public partial class MainForm : Form {
@@ -150,6 +151,35 @@ namespace PythonControl {
             if(IsOn) chart1.Series[0].Points[Channel - 1].Color = SystemColors.Highlight;
             else chart1.Series[0].Points[Channel - 1].Color = SystemColors.InactiveCaption;
         }
+        
+        private void BtnSendAllLeds_Click(object sender, EventArgs e) {
+            BtnTTopLeds_Click(null, null);
+            BtnTBottomLeds_Click(null, null);
+            BtnTopBlinkFreq_Click(null, null);
+            BtnBottomBlinkFreq_Click(null, null);
+            BtnFreqLeds_Click(null, null);
+            // Channels
+            if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                CmdQ.Put(CmdSetParam(ParamIDs.SetChannels, ChnlMsk));
+            }
+        }
+
+        #region ==== Frequency ====
+        private void BtnFreqLeds_Click(object sender, EventArgs e) {
+            if(Int32.TryParse(TxtbFreqLeds.Text, out int NewF)) {
+                if(NewF > 0 && NewF <= 255) {
+                    // Send command
+                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                        CmdQ.Put(CmdSetParam(ParamIDs.SetFreq, NewF));
+                    }
+                }
+            }
+        }
+
+        private void TxtbFreqLeds_KeyPress(object sender, KeyPressEventArgs e) {
+            if(e.KeyChar == '\r') BtnFreqLeds_Click(null, null);
+        }
+        #endregion
 
         #region ==== Top/Bottom temperature selection ====
         private void BtnTTopLeds_Click(object sender, EventArgs e) {
@@ -189,13 +219,13 @@ namespace PythonControl {
         }
         #endregion
 
-        #region ==== Top/Bottom blink frequency selection ====
+        #region ==== Top/Bottom brightness selection ====
         private void BtnTopBlinkFreq_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbTopBlinkFreq.Text, out int NewF)) {
+            if(Int32.TryParse(txtbTopLeds.Text, out int NewF)) {
                 if(NewF > FreqBottom) {
                     // Send command
                     if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetBlinkFTop, NewF));
+                        CmdQ.Put(CmdSetParam(ParamIDs.SetLedsTop, NewF));
                     }
                     // Change variable
                     FreqTop = NewF;
@@ -204,11 +234,11 @@ namespace PythonControl {
         }
 
         private void BtnBottomBlinkFreq_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbBottomBlinkFreq.Text, out int NewF)) {
+            if(Int32.TryParse(txtbBottomLeds.Text, out int NewF)) {
                 if(NewF < FreqTop) {
                     // Send command
                     if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetBlinkFBottom, NewF));
+                        CmdQ.Put(CmdSetParam(ParamIDs.SetLedsBottom, NewF));
                     }
                     // Change variable
                     FreqBottom = NewF;

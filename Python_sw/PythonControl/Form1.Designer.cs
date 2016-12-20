@@ -35,12 +35,16 @@
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint7 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(7D, 36D);
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint8 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(8D, 27D);
             this.gbLeds = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.BtnFreqLeds = new System.Windows.Forms.Button();
+            this.TxtbFreqLeds = new System.Windows.Forms.TextBox();
+            this.BtnSendAllLeds = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnBottomBlinkFreq = new System.Windows.Forms.Button();
             this.btnTopBlinkFreq = new System.Windows.Forms.Button();
-            this.txtbBottomBlinkFreq = new System.Windows.Forms.TextBox();
+            this.txtbBottomLeds = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtbTopBlinkFreq = new System.Windows.Forms.TextBox();
+            this.txtbTopLeds = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnTBottomLeds = new System.Windows.Forms.Button();
@@ -65,6 +69,7 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.timerHeartBeat = new System.Windows.Forms.Timer(this.components);
             this.gbLeds.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbChannelsLeds.SuspendLayout();
@@ -74,30 +79,76 @@
             // 
             // gbLeds
             // 
+            this.gbLeds.Controls.Add(this.groupBox3);
+            this.gbLeds.Controls.Add(this.BtnSendAllLeds);
             this.gbLeds.Controls.Add(this.groupBox2);
             this.gbLeds.Controls.Add(this.groupBox1);
             this.gbLeds.Controls.Add(this.gbChannelsLeds);
-            this.gbLeds.Location = new System.Drawing.Point(12, 12);
+            this.gbLeds.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbLeds.Location = new System.Drawing.Point(0, 0);
             this.gbLeds.Name = "gbLeds";
-            this.gbLeds.Size = new System.Drawing.Size(417, 547);
+            this.gbLeds.Size = new System.Drawing.Size(448, 566);
             this.gbLeds.TabIndex = 0;
             this.gbLeds.TabStop = false;
             this.gbLeds.Text = "Светодиоды";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.BtnFreqLeds);
+            this.groupBox3.Controls.Add(this.TxtbFreqLeds);
+            this.groupBox3.Location = new System.Drawing.Point(316, 19);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(123, 81);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Частота, Гц (1...250)";
+            // 
+            // BtnFreqLeds
+            // 
+            this.BtnFreqLeds.Image = global::PythonControl.Properties.Resources.ArrowRight;
+            this.BtnFreqLeds.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.BtnFreqLeds.Location = new System.Drawing.Point(6, 45);
+            this.BtnFreqLeds.Name = "BtnFreqLeds";
+            this.BtnFreqLeds.Size = new System.Drawing.Size(108, 23);
+            this.BtnFreqLeds.TabIndex = 10;
+            this.BtnFreqLeds.Text = "Ok";
+            this.BtnFreqLeds.UseVisualStyleBackColor = true;
+            this.BtnFreqLeds.Click += new System.EventHandler(this.BtnFreqLeds_Click);
+            // 
+            // TxtbFreqLeds
+            // 
+            this.TxtbFreqLeds.Location = new System.Drawing.Point(6, 17);
+            this.TxtbFreqLeds.MaxLength = 36;
+            this.TxtbFreqLeds.Name = "TxtbFreqLeds";
+            this.TxtbFreqLeds.Size = new System.Drawing.Size(108, 20);
+            this.TxtbFreqLeds.TabIndex = 8;
+            this.TxtbFreqLeds.Text = "4";
+            this.TxtbFreqLeds.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbFreqLeds_KeyPress);
+            // 
+            // BtnSendAllLeds
+            // 
+            this.BtnSendAllLeds.Location = new System.Drawing.Point(316, 461);
+            this.BtnSendAllLeds.Name = "BtnSendAllLeds";
+            this.BtnSendAllLeds.Size = new System.Drawing.Size(123, 74);
+            this.BtnSendAllLeds.TabIndex = 3;
+            this.BtnSendAllLeds.Text = "Send all";
+            this.BtnSendAllLeds.UseVisualStyleBackColor = true;
+            this.BtnSendAllLeds.Click += new System.EventHandler(this.BtnSendAllLeds_Click);
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnBottomBlinkFreq);
             this.groupBox2.Controls.Add(this.btnTopBlinkFreq);
-            this.groupBox2.Controls.Add(this.txtbBottomBlinkFreq);
+            this.groupBox2.Controls.Add(this.txtbBottomLeds);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.txtbTopBlinkFreq);
+            this.groupBox2.Controls.Add(this.txtbTopLeds);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Location = new System.Drawing.Point(6, 454);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(405, 81);
+            this.groupBox2.Size = new System.Drawing.Size(303, 81);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Частоты мерцания";
+            this.groupBox2.Text = "Яркость светодиодов (0...100)";
             // 
             // btnBottomBlinkFreq
             // 
@@ -123,43 +174,43 @@
             this.btnTopBlinkFreq.UseVisualStyleBackColor = true;
             this.btnTopBlinkFreq.Click += new System.EventHandler(this.BtnTopBlinkFreq_Click);
             // 
-            // txtbBottomBlinkFreq
+            // txtbBottomLeds
             // 
-            this.txtbBottomBlinkFreq.Location = new System.Drawing.Point(162, 47);
-            this.txtbBottomBlinkFreq.Name = "txtbBottomBlinkFreq";
-            this.txtbBottomBlinkFreq.Size = new System.Drawing.Size(49, 20);
-            this.txtbBottomBlinkFreq.TabIndex = 9;
-            this.txtbBottomBlinkFreq.Text = "4";
-            this.txtbBottomBlinkFreq.WordWrap = false;
-            this.txtbBottomBlinkFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbBottomBlinkFreq_KeyPress);
+            this.txtbBottomLeds.Location = new System.Drawing.Point(162, 47);
+            this.txtbBottomLeds.Name = "txtbBottomLeds";
+            this.txtbBottomLeds.Size = new System.Drawing.Size(49, 20);
+            this.txtbBottomLeds.TabIndex = 9;
+            this.txtbBottomLeds.Text = "1";
+            this.txtbBottomLeds.WordWrap = false;
+            this.txtbBottomLeds.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbBottomBlinkFreq_KeyPress);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(7, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(70, 13);
+            this.label3.Size = new System.Drawing.Size(78, 13);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Верхняя, Гц:";
+            this.label3.Text = "Максимум, %:";
             // 
-            // txtbTopBlinkFreq
+            // txtbTopLeds
             // 
-            this.txtbTopBlinkFreq.Location = new System.Drawing.Point(162, 17);
-            this.txtbTopBlinkFreq.MaxLength = 36;
-            this.txtbTopBlinkFreq.Name = "txtbTopBlinkFreq";
-            this.txtbTopBlinkFreq.Size = new System.Drawing.Size(49, 20);
-            this.txtbTopBlinkFreq.TabIndex = 8;
-            this.txtbTopBlinkFreq.Text = "36";
-            this.txtbTopBlinkFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbTopBlinkFreq_KeyPress);
+            this.txtbTopLeds.Location = new System.Drawing.Point(162, 17);
+            this.txtbTopLeds.MaxLength = 36;
+            this.txtbTopLeds.Name = "txtbTopLeds";
+            this.txtbTopLeds.Size = new System.Drawing.Size(49, 20);
+            this.txtbTopLeds.TabIndex = 8;
+            this.txtbTopLeds.Text = "100";
+            this.txtbTopLeds.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtbTopBlinkFreq_KeyPress);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(7, 50);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.Size = new System.Drawing.Size(72, 13);
             this.label4.TabIndex = 0;
-            this.label4.Text = "Нижняя, Гц:";
+            this.label4.Text = "Минимум, %:";
             // 
             // groupBox1
             // 
@@ -171,7 +222,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(6, 19);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(405, 81);
+            this.groupBox1.Size = new System.Drawing.Size(303, 81);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Пороги температуры";
@@ -251,7 +302,7 @@
             this.gbChannelsLeds.Controls.Add(this.cbCh1Leds);
             this.gbChannelsLeds.Location = new System.Drawing.Point(6, 106);
             this.gbChannelsLeds.Name = "gbChannelsLeds";
-            this.gbChannelsLeds.Size = new System.Drawing.Size(405, 342);
+            this.gbChannelsLeds.Size = new System.Drawing.Size(433, 342);
             this.gbChannelsLeds.TabIndex = 0;
             this.gbChannelsLeds.TabStop = false;
             this.gbChannelsLeds.Text = "Каналы датчика";
@@ -287,7 +338,7 @@
             series1.Points.Add(dataPoint7);
             series1.Points.Add(dataPoint8);
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(399, 300);
+            this.chart1.Size = new System.Drawing.Size(427, 300);
             this.chart1.TabIndex = 8;
             this.chart1.Text = "chart1";
             // 
@@ -296,7 +347,7 @@
             this.cbCh8Leds.AutoSize = true;
             this.cbCh8Leds.Checked = true;
             this.cbCh8Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh8Leds.Location = new System.Drawing.Point(343, 18);
+            this.cbCh8Leds.Location = new System.Drawing.Point(369, 18);
             this.cbCh8Leds.Name = "cbCh8Leds";
             this.cbCh8Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh8Leds.TabIndex = 7;
@@ -309,7 +360,7 @@
             this.cbCh7Leds.AutoSize = true;
             this.cbCh7Leds.Checked = true;
             this.cbCh7Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh7Leds.Location = new System.Drawing.Point(305, 18);
+            this.cbCh7Leds.Location = new System.Drawing.Point(328, 18);
             this.cbCh7Leds.Name = "cbCh7Leds";
             this.cbCh7Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh7Leds.TabIndex = 6;
@@ -322,7 +373,7 @@
             this.cbCh6Leds.AutoSize = true;
             this.cbCh6Leds.Checked = true;
             this.cbCh6Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh6Leds.Location = new System.Drawing.Point(266, 18);
+            this.cbCh6Leds.Location = new System.Drawing.Point(287, 18);
             this.cbCh6Leds.Name = "cbCh6Leds";
             this.cbCh6Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh6Leds.TabIndex = 5;
@@ -335,7 +386,7 @@
             this.cbCh5Leds.AutoSize = true;
             this.cbCh5Leds.Checked = true;
             this.cbCh5Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh5Leds.Location = new System.Drawing.Point(230, 18);
+            this.cbCh5Leds.Location = new System.Drawing.Point(246, 18);
             this.cbCh5Leds.Name = "cbCh5Leds";
             this.cbCh5Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh5Leds.TabIndex = 4;
@@ -348,7 +399,7 @@
             this.cbCh4Leds.AutoSize = true;
             this.cbCh4Leds.Checked = true;
             this.cbCh4Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh4Leds.Location = new System.Drawing.Point(194, 18);
+            this.cbCh4Leds.Location = new System.Drawing.Point(205, 18);
             this.cbCh4Leds.Name = "cbCh4Leds";
             this.cbCh4Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh4Leds.TabIndex = 3;
@@ -361,7 +412,7 @@
             this.cbCh3Leds.AutoSize = true;
             this.cbCh3Leds.Checked = true;
             this.cbCh3Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh3Leds.Location = new System.Drawing.Point(152, 17);
+            this.cbCh3Leds.Location = new System.Drawing.Point(164, 18);
             this.cbCh3Leds.Name = "cbCh3Leds";
             this.cbCh3Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh3Leds.TabIndex = 2;
@@ -374,7 +425,7 @@
             this.cbCh2Leds.AutoSize = true;
             this.cbCh2Leds.Checked = true;
             this.cbCh2Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh2Leds.Location = new System.Drawing.Point(115, 17);
+            this.cbCh2Leds.Location = new System.Drawing.Point(123, 18);
             this.cbCh2Leds.Name = "cbCh2Leds";
             this.cbCh2Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh2Leds.TabIndex = 1;
@@ -387,7 +438,7 @@
             this.cbCh1Leds.AutoSize = true;
             this.cbCh1Leds.Checked = true;
             this.cbCh1Leds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCh1Leds.Location = new System.Drawing.Point(76, 18);
+            this.cbCh1Leds.Location = new System.Drawing.Point(82, 18);
             this.cbCh1Leds.Name = "cbCh1Leds";
             this.cbCh1Leds.Size = new System.Drawing.Size(15, 14);
             this.cbCh1Leds.TabIndex = 0;
@@ -400,9 +451,9 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.lblPythonReplying});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 567);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 544);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(441, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(448, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -433,7 +484,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(441, 589);
+            this.ClientSize = new System.Drawing.Size(448, 566);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.gbLeds);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -442,6 +493,8 @@
             this.Text = "Управление индикацией";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.gbLeds.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -474,9 +527,9 @@
         private System.Windows.Forms.TextBox txtbTBottomLeds;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox txtbBottomBlinkFreq;
+        private System.Windows.Forms.TextBox txtbBottomLeds;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtbTopBlinkFreq;
+        private System.Windows.Forms.TextBox txtbTopLeds;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel StatusLabel;
@@ -488,6 +541,10 @@
         private System.Windows.Forms.Button btnTopBlinkFreq;
         private System.Windows.Forms.Button btnTBottomLeds;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Button BtnSendAllLeds;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button BtnFreqLeds;
+        private System.Windows.Forms.TextBox TxtbFreqLeds;
     }
 }
 

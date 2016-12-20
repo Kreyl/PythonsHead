@@ -95,8 +95,11 @@ uint8_t App_t::SetParam(uint8_t ParamID, uint8_t Value) {
         case parSetChannels:     LedIndication.EnableMsk = Value; break;
         case parSetTTop:         LedIndication.TTop = Value; break;
         case parSetTBottom:      LedIndication.TBottom = Value; break;
-        case parSetBlinkFTop:    LedIndication.FreqTop = Value; break;
-        case parSetBlinkFBottom: LedIndication.FreqBottom = Value; break;
+        case parSetLedsTop:      LedIndication.BrtTop = Value; break;
+        case parSetLedsBottom:   LedIndication.BrtBottom = Value; break;
+        case parFreq:
+            for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(Value);
+            break;
         default: return CMD_UNKNOWN;
     }
     return OK;
@@ -114,11 +117,11 @@ void LedIndication_t::Process(int16_t *pt) {
             if(t > Top) t = Top;
             if(t < Bottom) t = Bottom;
             // Calculate proportion
-            int32_t FreqHz = Proportion<int32_t>(Bottom, Top, FreqBottom, FreqTop, t);
-            Uart.Printf("%u  t=%d, f=%d\r", i, t, FreqHz);
+            int32_t Brt = Proportion<int32_t>(Bottom, Top, BrtBottom, BrtTop, t);
+            Uart.Printf("%u  t=%d, v=%d\r", i, t, Brt);
             // Setup LED
-            Led[i]->Set(50);
-            Led[i]->SetFrequencyHz(FreqHz);
+            Led[i]->Set(Brt);
+//            Led[i]->SetFrequencyHz(FreqHz);
         }
         else Led[i]->Set(0);
     }

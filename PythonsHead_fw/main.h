@@ -18,7 +18,8 @@
 enum ParamID_t {
     parSetChannels = 0,
     parSetTTop = 1, parSetTBottom = 2,
-    parSetBlinkFTop = 3, parSetBlinkFBottom = 4,
+    parSetLedsTop = 3, parSetLedsBottom = 4,
+    parFreq = 5,
 };
 
 class LedIndication_t {
@@ -26,7 +27,7 @@ private:
     bool IChEnabled(int n) { return (EnableMsk & (1 << (7 - n))); }
 public:
     // Params
-    int32_t FreqBottom = 1, FreqTop = 36;
+    int32_t BrtBottom = 1, BrtTop = 100;
     uint8_t EnableMsk = 0xFF;
     int32_t TBottom = 18, TTop = 36;
     void Process(int16_t *pt);
