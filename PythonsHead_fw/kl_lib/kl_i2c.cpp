@@ -97,7 +97,7 @@ void i2c_t::Resume() {
     PParams->pi2c->CR2 |= I2C_CR2_DMAEN;
 }
 
-void i2c_t::IReset() {
+void i2c_t::Reset() {
     Standby();
     Resume();
 }
@@ -223,7 +223,7 @@ uint8_t i2c_t::CheckAddress(uint32_t Addr) {
         Uart.Printf("i2cC Busy\r");
         goto ChckEnd;
     }
-    IReset(); // Reset I2C
+    Reset(); // Reset I2C
     // Clear flags
     PParams->pi2c->SR1 = 0;
     while(RxIsNotEmpty()) (void)PParams->pi2c->DR;   // Read DR until it empty

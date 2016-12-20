@@ -7,9 +7,8 @@
 
 #include "OmronD6Tt.h"
 #include "board.h"
-#include "kl_i2c.h"
 
-OmronD6T_t Sns(i2c2);
+OmronD6T_t Sns(&i2c2);
 
 const uint8_t Cmd = 0x4C;
 
@@ -18,5 +17,5 @@ uint8_t OmronD6T_t::ReadData() {
 }
 
 void OmronD6T_t::Restart() {
-    i2c.Reset();
+    i2c->Reset();
 }

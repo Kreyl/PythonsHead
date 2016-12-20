@@ -8,6 +8,7 @@
 #pragma once
 
 #include "kl_lib.h"
+#include "kl_i2c.h"
 
 struct SnsData_t {
     int16_t Temperature;

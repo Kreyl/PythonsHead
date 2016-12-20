@@ -15,6 +15,11 @@ struct i2cParams_t {
     const stm32_dma_stream_t *PDmaRx;
 };
 
+/* Example:
+ * i2c_t i2c (I2C_ACC, ACC_I2C_GPIO, ACC_I2C_SCL_PIN, ACC_I2C_SDA_PIN,
+ * 400000, I2C_ACC_DMA_TX, I2C_ACC_DMA_RX );
+ */
+
 #define I2C_DMATX_MODE  STM32_DMA_CR_CHSEL(DmaChnl) |   \
                         DMA_PRIORITY_LOW | \
                         STM32_DMA_CR_MSIZE_BYTE | \
@@ -34,7 +39,6 @@ struct i2cParams_t {
 class i2c_t {
 private:
     const i2cParams_t *PParams;
-    void IReset();
     void SendStart()     { PParams->pi2c->CR1 |= I2C_CR1_START; }
     void SendStop()      { PParams->pi2c->CR1 |= I2C_CR1_STOP; }
     void AckEnable()     { PParams->pi2c->CR1 |= I2C_CR1_ACK; }
@@ -66,6 +70,7 @@ public:
     void ScanBus();
     void Standby();
     void Resume();
+    void Reset();
     uint8_t CheckAddress(uint32_t Addr);
     uint8_t Write     (uint8_t Addr, uint8_t *WPtr1, uint8_t WLength1);
     uint8_t WriteRead (uint8_t Addr, uint8_t *WPtr,  uint8_t WLength,  uint8_t *RPtr, uint8_t RLength);

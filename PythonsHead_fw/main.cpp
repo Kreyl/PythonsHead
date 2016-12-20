@@ -16,16 +16,16 @@ const PinOutput_t Led {LED_GPIO, LED_PIN, omPushPull};
 
 #define PWM_TOP     255
 
-PinOutputPWM_t Out[8] = {
-        {PWM_GPIO, PWM1_PIN, PWM1_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM2_PIN, PWM2_TIM, PWM2_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM3_PIN, PWM3_TIM, PWM3_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM4_PIN, PWM4_TIM, PWM4_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM5_PIN, PWM5_TIM, PWM5_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM6_PIN, PWM6_TIM, PWM6_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM7_PIN, PWM7_TIM, PWM7_CH, invNotInverted, omPushPull, PWM_TOP},
-        {PWM_GPIO, PWM8_PIN, PWM8_TIM, PWM8_CH, invNotInverted, omPushPull, PWM_TOP},
-};
+PinOutputPWM_t Out0({PWM_GPIO, PWM1_PIN, PWM1_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out1({PWM_GPIO, PWM2_PIN, PWM2_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out2({PWM_GPIO, PWM3_PIN, PWM3_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out3({PWM_GPIO, PWM4_PIN, PWM4_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out4({PWM_GPIO, PWM5_PIN, PWM5_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out5({PWM_GPIO, PWM6_PIN, PWM6_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out6({PWM_GPIO, PWM7_PIN, PWM7_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+PinOutputPWM_t Out7({PWM_GPIO, PWM8_PIN, PWM8_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
+
+const PinOutputPWM_t *Out[8] = {&Out0, &Out1, &Out2, &Out3, &Out4, &Out5, &Out6, &Out7};
 
 static void CalculatePWM();
 static int32_t LBuf[8];
@@ -49,8 +49,8 @@ int main(void) {
     Led.SetHi();
     // PWM
     for(uint8_t i=0; i<8; i++) {
-        Out[i].Init();
-        Out[i].Set(18);
+        Out[i]->Init();
+        Out[i]->Set(18);
     }
 
     i2c2.Init();    // Sns uses it
@@ -115,7 +115,7 @@ void CalculatePWM() {
     LBuf[5] = 0;
 
 
-    for(uint8_t i=0; i<8; i++) Out[i].Set(LBuf[i]);
+    for(uint8_t i=0; i<8; i++) Out[i]->Set(LBuf[i]);
 
 //    // Subtract Min
 //    //for(uint8_t i=0; i<8; i++) LBuf[i] -= Min;
