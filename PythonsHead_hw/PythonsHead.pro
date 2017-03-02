@@ -1,4 +1,4 @@
-update=28.02.2017 14:38:13
+update=02.03.2017 10:34:57
 version=1
 last_client=eeschema
 [pcbnew]
@@ -40,3 +40,4 @@ LibName8=Transistors_kl
 LibName9=RF ICs
 LibName10=Antennas_kl
 LibName11=memory
+LibName12=OpAmp_kl
