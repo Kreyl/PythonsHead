@@ -1,6 +1,6 @@
-update=02.03.2017 10:34:57
+update=03.03.2017 17:17:40
 version=1
-last_client=eeschema
+last_client=kicad
 [pcbnew]
 version=1
 LastNetListRead=
@@ -23,8 +23,6 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=D:/Libs/Kicad
@@ -41,3 +39,5 @@ LibName9=RF ICs
 LibName10=Antennas_kl
 LibName11=memory
 LibName12=OpAmp_kl
+[general]
+version=1
