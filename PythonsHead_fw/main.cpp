@@ -8,21 +8,28 @@
 
 #include "main.h"
 #include "kl_lib.h"
-//#include "SimpleSensors.h"
-//#include "led.h"
-//#include "Sequences.h"
+#include "led.h"
+#include "Sequences.h"
 
 App_t App;
+LedOnOff_t LedState(LED_PIN);
+
+LedSmooth_t Led0 (LED_1);
+LedSmooth_t Led1 (LED_2);
+LedSmooth_t Led2 (LED_3);
+LedSmooth_t Led3 (LED_4);
+LedSmooth_t Led4 (LED_5);
+LedSmooth_t Led5 (LED_6);
+LedSmooth_t Led6 (LED_7);
+LedSmooth_t Led7 (LED_8);
+
+//#define LED_CNT     8
+//LedSmooth_t *Led[LED_CNT] = {&Led0, &Led1, &Led2, &Led3, &Led4, &Led5, &Led6, &Led7};
+
 
 int main() {
     // ==== Setup clock ====
-//    uint8_t ClkResult = FAILURE;
-//    Clk.SetupFlashLatency(12);  // Setup Flash Latency for clock in MHz
-//    // 12 MHz/6 = 2; 2*192 = 384; 384/8 = 48 (preAHB divider); 384/8 = 48 (USB clock)
-//    Clk.SetupPLLDividers(6, 192, pllSysDiv8, 8);
-//    // 48/4 = 12 MHz core clock. APB1 & APB2 clock derive on AHB clock
-//    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
-//    if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
+    Clk.SetHiPerfMode();
     Clk.UpdateFreqValues();
 
     // ==== Init OS ====
@@ -34,6 +41,15 @@ int main() {
     Uart.Init(115200, UART_GPIO, UART_TX_PIN, UART_GPIO, UART_RX_PIN);
     Uart.Printf("\r%S %S\r\n", APP_NAME, BUILD_TIME);
     Clk.PrintFreqs();
+
+    // LEDs
+    LedState.Init();
+    LedState.On();
+//    for(uint8_t i=0; i<LED_CNT; i++) Led[i]->Init();
+//    for(uint8_t i=0; i<LED_CNT; i++) {
+//        Led[i]->StartOrRestart(lsqStart);
+//        chThdSleepMilliseconds(270);
+//    }
 
     // ==== Main cycle ====
     App.ITask();

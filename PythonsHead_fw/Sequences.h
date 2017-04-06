@@ -238,18 +238,19 @@ const LedRGBChunk_t lsqChargingDone[] = {
 #endif
 
 #if 1 // =========================== LED Smooth ================================
-#define LED_TOP_BRIGHTNESS  400
+#define LED_TOP_BRIGHTNESS  100
 
 const LedSmoothChunk_t lsqFadeIn[] = {
-        {csSetup, 630, LED_TOP_BRIGHTNESS},
+        {csSetup, 360, LED_TOP_BRIGHTNESS},
         {csEnd}
 };
 const LedSmoothChunk_t lsqFadeOut[] = {
         {csSetup, 630, 0},
         {csEnd}
 };
-const LedSmoothChunk_t lsqEnterActive[] = {
-        {csSetup, 0, LED_TOP_BRIGHTNESS},
+const LedSmoothChunk_t lsqStart[] = {
+        {csSetup, 360, LED_TOP_BRIGHTNESS},
+        {csSetup, 360, 0},
         {csEnd}
 };
 const LedSmoothChunk_t lsqEnterIdle[] = {

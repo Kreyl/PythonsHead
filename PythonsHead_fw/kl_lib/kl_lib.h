@@ -1439,9 +1439,9 @@ enum McoDiv_t {mcoDiv1=0b000, mcoDiv2=0b100, mcoDiv3=0b101, mcoDiv4=0b110, mcoDi
 
 class Clk_t {
 private:
-    uint8_t HSEEnable();
-    uint8_t HSIEnable();
-    uint8_t PLLEnable();
+    uint8_t EnableHSE();
+    uint8_t EnableHSI();
+    uint8_t EnablePLL();
 public:
     // Frequency values
     uint32_t AHBFreqHz;     // HCLK: AHB Buses, Core, Memory, DMA; 120 MHz max
@@ -1451,13 +1451,13 @@ public:
     uint8_t SwitchToHSI();
     uint8_t SwitchToHSE();
     uint8_t SwitchToPLL();
-    void HSEDisable() { RCC->CR &= ~RCC_CR_HSEON; }
-    void HSIDisable() { RCC->CR &= ~RCC_CR_HSION; }
-    void PLLDisable() { RCC->CR &= ~RCC_CR_PLLON; }
-    void LsiEnable();
+    void DisableHSE() { RCC->CR &= ~RCC_CR_HSEON; }
+    void DisableHSI() { RCC->CR &= ~RCC_CR_HSION; }
+    void DisablePLL() { RCC->CR &= ~RCC_CR_PLLON; }
+    void EnableLsi();
     // Dividers
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
-    uint8_t SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q);
+    uint8_t SetupPllMulDiv(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q);
     void UpdateFreqValues();
     uint8_t SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV=3300);
     // Disabling the prefetch buffer avoids extra Flash access that consumes 20 mA for 128-bit line fetching.
@@ -1489,10 +1489,13 @@ public:
     }
 
     // Clock output
-    void MCO1Enable(Mco1Src_t Src, McoDiv_t Div);
-    void MCO1Disable();
-    void MCO2Enable(Mco2Src_t Src, McoDiv_t Div);
-    void MCO2Disable();
+    void EnableMCO1(Mco1Src_t Src, McoDiv_t Div);
+    void DisableMCO1();
+    void EnableMCO2(Mco2Src_t Src, McoDiv_t Div);
+    void DisableMCO2();
+
+    void SetHiPerfMode();
+    void SetLoPerfMode();
 };
 
 /*

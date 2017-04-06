@@ -31,8 +31,17 @@
 #define UART_RX_PIN     10
 #define UART_AF         AF7 // for USART2 @ GPIOA
 
-// LED
-//#define LED_PIN         { GPIOB, 3, TIM2, 2, invNotInverted, omPushPull, 512 }
+// LEDs
+#define LED_PIN         GPIOB, 9, omPushPull
+#define LED_TOP_BRT     100
+#define LED_1           { GPIOB, 4,  TIM3, 1, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_2           { GPIOB, 5,  TIM3, 2, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_3           { GPIOB, 0,  TIM3, 3, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_4           { GPIOB, 1,  TIM3, 4, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_5           { GPIOD, 12, TIM1, 1, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_6           { GPIOD, 13, TIM1, 2, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_7           { GPIOD, 14, TIM1, 3, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_8           { GPIOD, 15, TIM1, 4, invInverted, omPushPull, LED_TOP_BRT }
 
 #endif // GPIO
 
