@@ -10,11 +10,12 @@
 	<Document>
 		<LocalLibrary />
 		<Pcb>
-			<File path=".\PythonsHead.fsx" isopened="1"/>
+			<File path=".\PythonsHead.fsx" isopened="0"/>
 		</Pcb>
 		<Import>
 			<Specctra>
 			<Path name="D:\Nute\PresentTime\Python\PythonsHead_hw\PythonsHead.dsn"/>
+			<Path name="D:\Nute\Calmari\Candle\Candle_hw\Candle.dsn"/>
 			</Specctra>
 		</Import>
 		<ARouteSessions>

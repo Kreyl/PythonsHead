@@ -1,129 +1,66 @@
 /*
- * main.cpp
+ * File:   main.cpp
+ * Author: Elessar
+ * Project: MasonOrder
  *
- *  Created on: 20 февр. 2014 г.
- *      Author: g.kruglov
+ * Created on May 27, 2016, 6:37 PM
  */
 
 #include "main.h"
-#include "board.h"
-#include "radio_lvl1.h"
-#include "OmronD6Tt.h"
+#include "kl_lib.h"
+//#include "SimpleSensors.h"
+//#include "led.h"
+//#include "Sequences.h"
 
 App_t App;
-LedIndication_t LedIndication;
 
-const PinOutput_t LedState {LED_GPIO, LED_PIN, omPushPull};
-
-#define PWM_TOP     100
-
-PinOutputPWM_t Out0({PWM_GPIO, PWM1_PIN, PWM1_TIM, PWM1_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out1({PWM_GPIO, PWM2_PIN, PWM2_TIM, PWM2_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out2({PWM_GPIO, PWM3_PIN, PWM3_TIM, PWM3_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out3({PWM_GPIO, PWM4_PIN, PWM4_TIM, PWM4_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out4({PWM_GPIO, PWM5_PIN, PWM5_TIM, PWM5_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out5({PWM_GPIO, PWM6_PIN, PWM6_TIM, PWM6_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out6({PWM_GPIO, PWM7_PIN, PWM7_TIM, PWM7_CH, invNotInverted, omPushPull, PWM_TOP});
-PinOutputPWM_t Out7({PWM_GPIO, PWM8_PIN, PWM8_TIM, PWM8_CH, invNotInverted, omPushPull, PWM_TOP});
-
-const PinOutputPWM_t *Led[8] = {&Out0, &Out1, &Out2, &Out3, &Out4, &Out5, &Out6, &Out7};
-
-int main(void) {
-    // ==== Init Vcore & clock system ====
-    SetupVCore(vcore1V2);
+int main() {
+    // ==== Setup clock ====
+//    uint8_t ClkResult = FAILURE;
+//    Clk.SetupFlashLatency(12);  // Setup Flash Latency for clock in MHz
+//    // 12 MHz/6 = 2; 2*192 = 384; 384/8 = 48 (preAHB divider); 384/8 = 48 (USB clock)
+//    Clk.SetupPLLDividers(6, 192, pllSysDiv8, 8);
+//    // 48/4 = 12 MHz core clock. APB1 & APB2 clock derive on AHB clock
+//    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
+//    if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
 
-    // Init OS
+    // ==== Init OS ====
     halInit();
     chSysInit();
     App.InitThread();
 
-    // ==== Init hardware ====
-    Uart.Init(115200, UART_GPIO, UART_TX_PIN);//, UART_GPIO, UART_RX_PIN);
-    Uart.Printf("\r%S %S\r", APP_NAME, APP_VERSION);
+    // ==== Init Hard & Soft ====
+    Uart.Init(115200, UART_GPIO, UART_TX_PIN, UART_GPIO, UART_RX_PIN);
+    Uart.Printf("\r%S %S\r\n", APP_NAME, BUILD_TIME);
     Clk.PrintFreqs();
 
-    // LEDs
-    LedState.Init();
-    LedState.SetHi();
-    for(uint8_t i=0; i<8; i++) {
-        Led[i]->Init();
-        Led[i]->Set(0);
-        Led[i]->SetFrequencyHz(4);
-    }
-
-    i2c2.Init();    // Sns uses it
-
-    if(Radio.Init() != OK) {
-        for(int i=0; i<18; i++) {
-            LedState.Toggle();
-            chThdSleepMilliseconds(99);
-        }
-        LedState.SetLo();
-    }
-
-    // Main cycle
+    // ==== Main cycle ====
     App.ITask();
 }
 
 __noreturn
 void App_t::ITask() {
     while(true) {
-        LedState.SetLo();
-        if(Sns.ReadData() == OK) {
-            // Copy data for transmitting
-            chSysLock();
-            Radio.PktInfoTx.Cmd = 0;    // 0 means GetInfo
-            for(uint8_t i=0; i<SNS_T_CNT; i++) Radio.PktInfoTx.t[i] = Sns.Data.Pix[i];
-            chSysUnlock();
+//        Uart.Printf("a");
+//        chThdSleepMilliseconds(540);
+        uint32_t Evt = chEvtWaitAny(ALL_EVENTS);
 
-//            Uart.Printf("%03d ", Sns.Data.Temperature);
-//            for(uint8_t i=0; i<8; i++) Uart.Printf("%03d ", Sns.Data.Pix[i]);
-//            Uart.Printf("\r\n");
-            // Process indication
-            LedIndication.Process(&Sns.Data.Pix[0]);
+        if(Evt & EVT_UART_NEW_CMD) {
+            OnCmd((Shell_t*)&Uart);
+            Uart.SignalCmdProcessed();
         }
-        else Sns.Restart();
-        LedState.SetHi();
-        chThdSleepMilliseconds(180);
     } // while true
 }
 
-uint8_t App_t::SetParam(uint8_t ParamID, uint8_t Value) {
-    Uart.Printf("Param %u, v %u\r", ParamID, Value);
-    switch(ParamID) {
-        case parSetChannels:     LedIndication.EnableMsk = Value; break;
-        case parSetTTop:         LedIndication.TTop = Value; break;
-        case parSetTBottom:      LedIndication.TBottom = Value; break;
-        case parSetLedsTop:      LedIndication.BrtTop = Value; break;
-        case parSetLedsBottom:   LedIndication.BrtBottom = Value; break;
-        case parFreq:
-            for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(Value);
-            break;
-        default: return CMD_UNKNOWN;
-    }
-    return OK;
-}
+#if 1 // ======================= Command processing ============================
+void App_t::OnCmd(Shell_t *PShell) {
+    Cmd_t *PCmd = &PShell->Cmd;
+    __unused int32_t dw32 = 0;  // May be unused in some configurations
+//    Uart.Printf("\r%S\r", PCmd->Name);
+    // Handle command
+    if(PCmd->NameIs("Ping")) PShell->Ack(retvOk);
 
-#if 1 // ========================= LED indication ==============================
-void LedIndication_t::Process(int16_t *pt) {
-    for(int i=0; i<SNS_T_CNT; i++) {
-        // Check if this channel required
-        if(IChEnabled(i)) {
-            int32_t t = pt[i];
-//            Uart.Printf("%d\r", t);
-            // Saturate temperature
-            int32_t Top = TTop * 10, Bottom = TBottom * 10;
-            if(t > Top) t = Top;
-            if(t < Bottom) t = Bottom;
-            // Calculate proportion
-            int32_t Brt = Proportion<int32_t>(Bottom, Top, BrtBottom, BrtTop, t);
-            Uart.Printf("%u  t=%d, v=%d\r", i, t, Brt);
-            // Setup LED
-            Led[i]->Set(Brt);
-//            Led[i]->SetFrequencyHz(FreqHz);
-        }
-        else Led[i]->Set(0);
-    }
+    else PShell->Ack(retvCmdUnknown);
 }
 #endif

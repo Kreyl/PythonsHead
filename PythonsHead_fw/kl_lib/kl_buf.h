@@ -5,15 +5,14 @@
  *      Author: kreyl
  */
 
-#ifndef KL_BUF_H_
-#define KL_BUF_H_
+#pragma once
 
 #include "ch.h"
 #include "string.h" // for memcpy
-#include <kl_lib.h>
+#include "kl_lib.h"
 
 // Lib version
-#define KL_BUF_VERSION      "20151102_1339"
+#define KL_BUF_VERSION      "20160514_1217"
 
 enum AddRslt_t {addrOk, addrFail, addrSwitch};
 
@@ -30,6 +29,7 @@ protected:
     uint32_t IFullSlotsCount=0;
     T IBuf[Sz], *PRead=IBuf, *PWrite=IBuf;
 public:
+    // Copies object
     uint8_t Get(T *p) {
         if(IFullSlotsCount == 0) return EMPTY;
         memcpy(p, PRead, sizeof(T));
@@ -37,6 +37,7 @@ public:
         IFullSlotsCount--;
         return OK;
     }
+    // Outputs pointer to object in buffer
     uint8_t GetPAndMove(T **pp) {
     	if(IFullSlotsCount == 0) return EMPTY;
     	*pp = PRead;
@@ -44,21 +45,24 @@ public:
         IFullSlotsCount--;
         return OK;
     }
+    // Outputs pointer to last object in buffer
     uint8_t GetLastP(T **pp) {
     	if(IFullSlotsCount == 0) return EMPTY;
 		*pp = PRead;
 		return OK;
     }
 
-    uint8_t PutAnyway(T *p) {
+    void PutAnyway(T *p) {
 		memcpy(PWrite, p, sizeof(T));
 		if(++PWrite > (IBuf + Sz - 1)) PWrite = IBuf;   // Circulate buffer
 		if(IFullSlotsCount < Sz) IFullSlotsCount++;
-		return OK;
 	}
     uint8_t Put(T *p) {
         if(IFullSlotsCount >= Sz) return OVERFLOW;
-        return PutAnyway(p);
+        else {
+            PutAnyway(p);
+            return OK;
+        }
     }
 
     inline bool IsEmpty() { return (IFullSlotsCount == 0); }
@@ -232,6 +236,33 @@ public:
 };
 #endif
 
+#if 1 // =========================== Frame buffer ==============================
+template <typename T, uint32_t Len>
+class FrameBuffer_t {
+private:
+    uint32_t W, H;
+public:
+    T Buf[Len];
+    uint8_t Setup(uint32_t Width, uint32_t Height) {
+        if(Width * Height > Len) return OVERFLOW;
+        else {
+            W = Width;
+            H = Height;
+            return OK;
+        }
+    }
+    uint8_t Put(uint32_t x, uint32_t y, T Value) {
+        uint32_t Indx = x + y * W;
+        if(Indx > Len) return OVERFLOW;
+        else {
+            Buf[Indx] = Value;
+            return OK;
+        }
+    }
+    T Get(uint32_t x, uint32_t y) { return Buf[x + y * W]; }
+};
+#endif
+
 // =============================== Chunk buf ===================================
 // Allows to add data chunk by chunk, and to get it all. And vice versa.
 /*template <typename T, uint32_t PktCnt, uint32_t PktDataSz>
@@ -297,4 +328,4 @@ public:
     }
 };
 */
-#endif /* KL_BUF_H_ */
+

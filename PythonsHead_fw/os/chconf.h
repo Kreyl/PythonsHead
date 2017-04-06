@@ -39,14 +39,14 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define CH_CFG_ST_RESOLUTION                16
+#define CH_CFG_ST_RESOLUTION                32
 
 /**
  * @brief   System tick frequency.
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 10000
+#define CH_CFG_ST_FREQUENCY                 1000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -230,7 +230,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_EVENTS.
  */
-#define CH_CFG_USE_EVENTS_TIMEOUT           TRUE
+#define CH_CFG_USE_EVENTS_TIMEOUT           FALSE
 
 /**
  * @brief   Synchronous Messages APIs.
@@ -260,7 +260,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#define CH_CFG_USE_MAILBOXES                FALSE
+#define CH_CFG_USE_MAILBOXES                TRUE
 
 /**
  * @brief   I/O Queues APIs.
@@ -268,7 +268,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_QUEUES                   FALSE
+#define CH_CFG_USE_QUEUES                   TRUE
 
 /**
  * @brief   Core Memory Manager APIs.
@@ -484,7 +484,6 @@
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-
 // ==== @KL ====
 #if defined _FROM_ASM_
 #define PrintfC(a, b)
@@ -498,9 +497,8 @@ extern void PrintfCNow(const char *format, ...);
 #endif
 #endif
 
-#define CH_CFG_SYSTEM_HALT_HOOK(reason, message) {                          \
-  /* System halt code here.*/                                               \
-        PrintfCNow("\rHalt: %S: %S", reason, message);                      \
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
+        PrintfCNow("\rHalt: %S\r", reason);                      \
 }
 
 /** @} */

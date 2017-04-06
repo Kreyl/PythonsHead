@@ -37,7 +37,7 @@ struct LedRGBChunk_t {
 // LED Smooth
 struct LedSmoothChunk_t {
     BaseChunk_Vars;
-    uint8_t Brightness;
+    uint16_t Brightness;
 } __attribute__((packed));
 
 // Beeper
@@ -65,6 +65,10 @@ protected:
 public:
     void SetupSeqEndEvt(thread_t *APThread, eventmask_t AEvt = 0) {
         PThread = APThread;
+        EvtEnd = AEvt;
+    }
+    void SetupSeqEndEvt(eventmask_t AEvt = 0) {
+        PThread = chThdGetSelfX();
         EvtEnd = AEvt;
     }
 

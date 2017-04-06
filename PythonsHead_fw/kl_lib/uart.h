@@ -5,8 +5,7 @@
  *      Author: kreyl
  */
 
-#ifndef UART_H_
-#define UART_H_
+#pragma once
 
 #include "kl_lib.h"
 #include "kl_sprintf.h"
@@ -15,12 +14,13 @@
 #include "board.h"
 
 // Set to true if RX needed
-#define UART_RX_ENABLED     FALSE
+#define UART_RX_ENABLED     TRUE
 
-#define UART_USE_DMA        FALSE
+#define UART_USE_DMA        TRUE
+// On F0xx MCU, remap is done automatically
 
-#if UART_USE_DMA // ==== TX ====
-#define UART_TXBUF_SZ       1024
+// ==== TX ====
+#define UART_TXBUF_SZ       256
 
 #define UART_DMA_TX_MODE    STM32_DMA_CR_CHSEL(UART_DMA_CHNL) | \
                             DMA_PRIORITY_LOW | \
@@ -29,8 +29,6 @@
                             STM32_DMA_CR_MINC |       /* Memory pointer increase */ \
                             STM32_DMA_CR_DIR_M2P |    /* Direction is memory to peripheral */ \
                             STM32_DMA_CR_TCIE         /* Enable Transmission Complete IRQ */
-#endif
-
 
 #if UART_RX_ENABLED // ==== RX ====
 #define UART_RXBUF_SZ       99 // unprocessed bytes
@@ -71,13 +69,17 @@ public:
         if(UART == USART1) { rccDisableUSART1(FALSE); }
         else if(UART == USART2) { rccDisableUSART2(FALSE); }
     }
-    void OnAHBFreqChange();
+    void OnClkChange();
 #if UART_USE_DMA
-    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
-#endif
     void Printf(const char *S, ...);
     void PrintfI(const char *S, ...);
+    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
+#else
+    void Printf(const char *S, ...) {}
+    void PrintfI(const char *S, ...) {}
+#endif
     void PrintfNow(const char *S, ...);
+
     // Inner use
 #if UART_USE_DMA
     void IRQDmaTxHandler();
@@ -91,4 +93,4 @@ public:
 
 extern Uart_t Uart;
 
-#endif /* UART_H_ */
+#define UartPrintfFunc()    Uart.Printf(" %S\r", __FUNCTION__)

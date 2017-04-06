@@ -22,7 +22,8 @@
  * @{
  */
 
-#pragma once
+#ifndef _HAL_H_
+#define _HAL_H_
 
 #include "osal.h"
 #include "board.h"
@@ -35,7 +36,7 @@
 #include "hal_channels.h"
 #include "hal_files.h"
 #include "hal_ioblock.h"
-//#include "hal_mmcsd.h"
+#include "hal_mmcsd.h"
 
 /* Shared headers.*/
 #include "hal_buffers.h"
@@ -59,7 +60,7 @@
 //#include "sdc.h"
 //#include "spi.h"
 //#include "uart.h"
-#include "usb.h"
+//#include "usb.h"
 //#include "wdg.h"
 
 /*
@@ -69,10 +70,6 @@
 #if OSAL_ST_MODE != OSAL_ST_MODE_NONE
 #include "st.h"
 #endif
-
-/* Complex drivers.*/
-//#include "mmc_spi.h"
-//#include "serial_usb.h"
 
 /* Community drivers.*/
 #if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
@@ -102,7 +99,7 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "4.0.2"
+#define HAL_VERSION             "4.0.7"
 
 /**
  * @brief   HAL version major number.
@@ -117,7 +114,7 @@
 /**
  * @brief   HAL version patch number.
  */
-#define CH_HAL_PATCH            2
+#define CH_HAL_PATCH            7
 /** @} */
 
 /**
@@ -155,5 +152,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _HAL_H_ */
 
 /** @} */

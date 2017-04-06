@@ -1,48 +1,21 @@
-/*
- * main.h
- *
- *  Created on: 15 сент. 2014 г.
- *      Author: g.kruglov
- */
-
 #pragma once
 
 #include "ch.h"
+#include "hal.h"
 #include "kl_lib.h"
 #include "uart.h"
 #include "evt_mask.h"
-
-#define APP_NAME                "Python's Head"
-#define APP_VERSION             __DATE__ " " __TIME__
-
-enum ParamID_t {
-    parSetChannels = 0,
-    parSetTTop = 1, parSetTBottom = 2,
-    parSetLedsTop = 3, parSetLedsBottom = 4,
-    parFreq = 5,
-};
-
-class LedIndication_t {
-private:
-    bool IChEnabled(int n) { return (EnableMsk & (1 << (7 - n))); }
-public:
-    // Params
-    int32_t BrtBottom = 1, BrtTop = 100;
-    uint8_t EnableMsk = 0xFF;
-    int32_t TBottom = 18, TTop = 36;
-    void Process(int16_t *pt);
-};
+//#include "kl_adc.h"
+#include "board.h"
 
 class App_t {
 private:
-    thread_t *PThread;
+    thread_t *PThread; // Main thread
 public:
-    uint8_t SetParam(uint8_t ParamID, uint8_t Value);
-    // Eternal methods
     void InitThread() { PThread = chThdGetSelfX(); }
-    void SignalEvt(eventmask_t Evt) {
+    void SignalEvt(uint32_t EvtMsk) {
         chSysLock();
-        chEvtSignalI(PThread, Evt);
+        chEvtSignalI(PThread, EvtMsk);
         chSysUnlock();
     }
     void SignalEvtI(eventmask_t Evt) { chEvtSignalI(PThread, Evt); }
@@ -50,5 +23,4 @@ public:
     // Inner use
     void ITask();
 };
-
 extern App_t App;

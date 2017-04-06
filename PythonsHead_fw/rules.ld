@@ -1,20 +1,17 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
-    This file is part of ChibiOS.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-    ChibiOS is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+        http://www.apache.org/licenses/LICENSE-2.0
 
-    ChibiOS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 */
 
 __ram0_start__          = ORIGIN(ram0);
@@ -80,7 +77,7 @@ SECTIONS
         *(.glue_7)
         *(.gcc*)
     } > flash
-
+    
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -106,7 +103,7 @@ SECTIONS
     {
         . = ALIGN(8);
     } > flash
-
+    
     /* Legacy symbol, not used anywhere.*/
     . = ALIGN(4);
     PROVIDE(_etext = .);
@@ -143,7 +140,6 @@ SECTIONS
         *(.data.*)
         *(.ramtext)
         . = ALIGN(4);
-        *(.fastrun)         /* "RAM-Functions" */
         PROVIDE(_edata = .);
         _data_end = .;
     } > DATA_RAM AT > flash
@@ -360,4 +356,13 @@ SECTIONS
         . = ORIGIN(HEAP_RAM) + LENGTH(HEAP_RAM);
         __heap_end__ = .;
     } > HEAP_RAM
+
+    /***************************************
+     *  Here is place to read and write to *
+     ***************************************/
+    MyFlash 0x08006400 :
+    {
+        *(MyFlash)
+    } > flash
+
 }
