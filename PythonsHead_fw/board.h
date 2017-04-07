@@ -21,7 +21,7 @@
 
 #define SYS_TIM_CLK     (Clk.APB1FreqHz) // OS timer settings
 #define I2C_REQUIRED    FALSE
-#define ADC_REQUIRED    FALSE
+#define ADC_REQUIRED    TRUE
 #define SIMPLESENSORS_ENABLED   FALSE
 
 #if 1 // ========================== GPIO =======================================
@@ -30,6 +30,9 @@
 #define UART_TX_PIN     9
 #define UART_RX_PIN     10
 #define UART_AF         AF7 // for USART2 @ GPIOA
+
+// Battery measuremrnt
+#define BAT_MEAS_ADC    GPIOC, 5
 
 // LEDs
 #define LED_PIN         GPIOB, 9, omPushPull
@@ -48,34 +51,42 @@
 #define LR_A_PWM        { GPIOE, 9,  TIM1, 1, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_A_DIR1       GPIOE, 7
 #define LR_A_DIR2       GPIOE, 8
+#define LR_A_ADC        GPIOA, 2
 
 #define LR_B_PWM        { GPIOE, 11,  TIM1, 2, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_B_DIR1       GPIOE, 10
 #define LR_B_DIR2       GPIOE, 12
+#define LR_B_ADC        GPIOA, 3
 
 #define LR_C_PWM        { GPIOE, 13,  TIM1, 3, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_C_DIR1       GPIOE, 15
 #define LR_C_DIR2       GPIOB, 12
+#define LR_C_ADC        GPIOA, 4
 
 #define LR_D_PWM        { GPIOE, 14,  TIM1, 4, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_D_DIR1       GPIOB, 13
 #define LR_D_DIR2       GPIOB, 14
+#define LR_D_ADC        GPIOC, 0
 
 #define LR_E_PWM        { GPIOC, 6,  TIM8, 1, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_E_DIR1       GPIOD, 0
 #define LR_E_DIR2       GPIOD, 1
+#define LR_E_ADC        GPIOC, 1
 
 #define LR_F_PWM        { GPIOC, 7,  TIM8, 2, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_F_DIR1       GPIOD, 2
 #define LR_F_DIR2       GPIOD, 3
+#define LR_F_ADC        GPIOC, 2
 
 #define LR_G_PWM        { GPIOC, 8,  TIM8, 3, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_G_DIR1       GPIOD, 4
 #define LR_G_DIR2       GPIOD, 5
+#define LR_G_ADC        GPIOC, 3
 
 #define LR_H_PWM        { GPIOC, 9,  TIM8, 4, invInverted, omPushPull, LR_PWM_TOP}
 #define LR_H_DIR1       GPIOD, 6
 #define LR_H_DIR2       GPIOD, 7
+#define LR_H_ADC        GPIOC, 4
 
 #endif // GPIO
 
@@ -95,14 +106,21 @@
 #define ADC_CLK_DIVIDER		adcDiv4
 
 // ADC channels
-#define BAT_CHNL 	        10
+#define ADC_CHNL_A 	        2
+#define ADC_CHNL_B 	        3
+#define ADC_CHNL_C 	        4
+#define ADC_CHNL_D 	        10
+#define ADC_CHNL_E 	        11
+#define ADC_CHNL_F 	        12
+#define ADC_CHNL_G 	        13
+#define ADC_CHNL_H 	        14
 
-//#define ADC_VREFINT_CHNL    17  // All 4xx and F072 devices. Do not change.
-#define ADC_CHANNELS        { BAT_CHNL }//{ BAT_CHNL, ADC_VREFINT_CHNL }
-#define CallConst           450
-#define ADC_CHANNEL_CNT     1   // Do not use countof(AdcChannels) as preprocessor does not know what is countof => cannot check
-#define ADC_SAMPLE_TIME     ast239d5Cycles
-#define ADC_SAMPLE_CNT      16   // How many times to measure every channel
+#define ADC_CHNL_BATTERY    15
+
+#define ADC_CHANNELS        { ADC_CHNL_A, ADC_CHNL_B, ADC_CHNL_C, ADC_CHNL_D, ADC_CHNL_E, ADC_CHNL_F, ADC_CHNL_G, ADC_CHNL_H, ADC_CHNL_BATTERY, ADC_CHNL_VREFINT }
+#define ADC_CHANNEL_CNT     10   // Do not use countof(AdcChannels) as preprocessor does not know what is countof => cannot check
+#define ADC_SAMPLE_TIME     ast84Cycles
+#define ADC_SAMPLE_CNT      1   // How many times to measure every channel
 
 #define ADC_MAX_SEQ_LEN     16  // 1...16; Const, see ref man
 #define ADC_SEQ_LEN         (ADC_SAMPLE_CNT * ADC_CHANNEL_CNT)
@@ -120,11 +138,8 @@
 #define UART_DMA_CHNL   4
 
 #if ADC_REQUIRED
-/* DMA request mapped on this DMA channel only if the corresponding remapping bit is cleared in the SYSCFG_CFGR1
- * register. For more details, please refer to Section10.1.1: SYSCFG configuration register 1 (SYSCFG_CFGR1) on
- * page173 */
-#define ADC_DMA         STM32_DMA2_STREAM4
-#define ADC_DMA_MODE    STM32_DMA_CR_CHSEL(0) |   /* DMA2 Stream4 Channel0 */ \
+#define ADC_DMA         STM32_DMA2_STREAM0
+#define ADC_DMA_MODE    STM32_DMA_CR_CHSEL(0) |   /* DMA2 Stream0 Channel0 */ \
                         DMA_PRIORITY_LOW | \
                         STM32_DMA_CR_MSIZE_HWORD | \
                         STM32_DMA_CR_PSIZE_HWORD | \

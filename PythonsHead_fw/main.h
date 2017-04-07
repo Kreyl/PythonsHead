@@ -55,5 +55,19 @@ public:
     }
 
     Laucaringe_t(const PwmSetup_t APwmSetup, GPIO_TypeDef *APGPIO1, uint16_t APin1, GPIO_TypeDef *APGPIO2, uint16_t APin2) :
-                IChnl(APwmSetup), Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull)  {}
+                IChnl(APwmSetup),
+                Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull)  {}
+};
+
+#define FILT_SZ     11
+
+class Filter_t {
+private:
+    uint32_t Buf[FILT_SZ];
+    uint32_t Cnt = 0;
+public:
+    void Put(uint32_t v) { if(Cnt < FILT_SZ) Buf[Cnt++] = v; }
+    void Flush() { Cnt = 0; }
+    bool IsReady() { return (Cnt == FILT_SZ); }
+    uint32_t GetResult() { return FindMediana<uint32_t>(Buf, FILT_SZ);  }
 };
