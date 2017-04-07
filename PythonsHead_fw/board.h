@@ -38,10 +38,44 @@
 #define LED_2           { GPIOB, 5,  TIM3, 2, invInverted, omPushPull, LED_TOP_BRT }
 #define LED_3           { GPIOB, 0,  TIM3, 3, invInverted, omPushPull, LED_TOP_BRT }
 #define LED_4           { GPIOB, 1,  TIM3, 4, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_5           { GPIOD, 12, TIM1, 1, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_6           { GPIOD, 13, TIM1, 2, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_7           { GPIOD, 14, TIM1, 3, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_8           { GPIOD, 15, TIM1, 4, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_5           { GPIOD, 12, TIM4, 1, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_6           { GPIOD, 13, TIM4, 2, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_7           { GPIOD, 14, TIM4, 3, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_8           { GPIOD, 15, TIM4, 4, invInverted, omPushPull, LED_TOP_BRT }
+
+// Laucaringi
+#define LR_PWM_TOP      255
+#define LR_A_PWM        { GPIOE, 9,  TIM1, 1, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_A_DIR1       GPIOE, 7
+#define LR_A_DIR2       GPIOE, 8
+
+#define LR_B_PWM        { GPIOE, 11,  TIM1, 2, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_B_DIR1       GPIOE, 10
+#define LR_B_DIR2       GPIOE, 12
+
+#define LR_C_PWM        { GPIOE, 13,  TIM1, 3, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_C_DIR1       GPIOE, 15
+#define LR_C_DIR2       GPIOB, 12
+
+#define LR_D_PWM        { GPIOE, 14,  TIM1, 4, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_D_DIR1       GPIOB, 13
+#define LR_D_DIR2       GPIOB, 14
+
+#define LR_E_PWM        { GPIOC, 6,  TIM8, 1, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_E_DIR1       GPIOD, 0
+#define LR_E_DIR2       GPIOD, 1
+
+#define LR_F_PWM        { GPIOC, 7,  TIM8, 2, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_F_DIR1       GPIOD, 2
+#define LR_F_DIR2       GPIOD, 3
+
+#define LR_G_PWM        { GPIOC, 8,  TIM8, 3, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_G_DIR1       GPIOD, 4
+#define LR_G_DIR2       GPIOD, 5
+
+#define LR_H_PWM        { GPIOC, 9,  TIM8, 4, invInverted, omPushPull, LR_PWM_TOP}
+#define LR_H_DIR1       GPIOD, 6
+#define LR_H_DIR2       GPIOD, 7
 
 #endif // GPIO
 

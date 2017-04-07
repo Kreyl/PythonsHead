@@ -11,6 +11,13 @@
 #include "uart.h"
 #include "main.h"   // App is there
 
+#if 1 // ============================ General ==================================
+// To replace standard error handler
+//extern "C" void __cxa_pure_virtual() {
+//    Uart.PrintfNow("pure_virtual\r");
+//}
+#endif
+
 #if 1 // ============================= Timer ===================================
 static uint32_t GetTimInputFreq(TIM_TypeDef* ITmr) {
     uint32_t InputFreq = 0;

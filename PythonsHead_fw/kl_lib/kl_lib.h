@@ -54,15 +54,6 @@ Maybe, to calm Eclipse, it will be required to write extra quote in the end: "\"
  */
 #define __ramfunc __attribute__ ((long_call, section (".fastrun")))
 
-/*
- * Early initialization code.
- * This initialization must be performed just after stack setup and before
- * any other initialization.
- */
-extern "C" {
-void __early_init(void);
-}
-
 #ifndef TRUE
 #define TRUE    1
 #endif
@@ -1497,15 +1488,6 @@ public:
     void SetHiPerfMode();
     void SetLoPerfMode();
 };
-
-/*
- * Early initialization code.
- * This initialization must be performed just after stack setup and before
- * any other initialization.
- */
-extern "C" {
-void __early_init(void);
-}
 
 #elif defined STM32L4XX
 // Values of the Internal oscillator in Hz

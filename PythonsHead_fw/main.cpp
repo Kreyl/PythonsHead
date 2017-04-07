@@ -23,9 +23,20 @@ LedSmooth_t Led5 (LED_6);
 LedSmooth_t Led6 (LED_7);
 LedSmooth_t Led7 (LED_8);
 
-//#define LED_CNT     8
-//LedSmooth_t *Led[LED_CNT] = {&Led0, &Led1, &Led2, &Led3, &Led4, &Led5, &Led6, &Led7};
+#define LED_CNT     8
+LedSmooth_t *Led[LED_CNT] = {&Led0, &Led1, &Led2, &Led3, &Led4, &Led5, &Led6, &Led7};
 
+Laucaringe_t LrA (LR_A_PWM, LR_A_DIR1, LR_A_DIR2);
+Laucaringe_t LrB (LR_B_PWM, LR_B_DIR1, LR_B_DIR2);
+Laucaringe_t LrC (LR_C_PWM, LR_C_DIR1, LR_C_DIR2);
+Laucaringe_t LrD (LR_D_PWM, LR_D_DIR1, LR_D_DIR2);
+Laucaringe_t LrE (LR_E_PWM, LR_E_DIR1, LR_E_DIR2);
+Laucaringe_t LrF (LR_F_PWM, LR_F_DIR1, LR_F_DIR2);
+Laucaringe_t LrG (LR_G_PWM, LR_G_DIR1, LR_G_DIR2);
+Laucaringe_t LrH (LR_H_PWM, LR_H_DIR1, LR_H_DIR2);
+
+#define LR_CNT      8
+Laucaringe_t *Lr[LR_CNT] = { &LrA, &LrB, &LrC, &LrD, &LrE, &LrF, &LrG, &LrH };
 
 int main() {
     // ==== Setup clock ====
@@ -45,11 +56,17 @@ int main() {
     // LEDs
     LedState.Init();
     LedState.On();
-//    for(uint8_t i=0; i<LED_CNT; i++) Led[i]->Init();
-//    for(uint8_t i=0; i<LED_CNT; i++) {
-//        Led[i]->StartOrRestart(lsqStart);
-//        chThdSleepMilliseconds(270);
-//    }
+    for(uint8_t i=0; i<LED_CNT; i++) Led[i]->Init();
+    for(uint8_t i=0; i<LED_CNT; i++) {
+        Led[i]->StartOrRestart(lsqStart);
+        chThdSleepMilliseconds(270);
+    }
+
+    // Laucaringi
+    for(uint8_t i=0; i<LR_CNT; i++) {
+        Lr[i]->Init();
+        Lr[i]->Set(25);
+    }
 
     // ==== Main cycle ====
     App.ITask();
@@ -72,10 +89,20 @@ void App_t::ITask() {
 #if 1 // ======================= Command processing ============================
 void App_t::OnCmd(Shell_t *PShell) {
     Cmd_t *PCmd = &PShell->Cmd;
-    __unused int32_t dw32 = 0;  // May be unused in some configurations
 //    Uart.Printf("\r%S\r", PCmd->Name);
     // Handle command
     if(PCmd->NameIs("Ping")) PShell->Ack(retvOk);
+
+    else if(PCmd->NameIs("Set")) {
+        int32_t Indx, Value;
+        if(PCmd->GetParams<int32_t>(2, &Indx, &Value) == retvOk) {
+            if(Indx > 7) PShell->Ack(retvCmdError);
+            else {
+                Lr[Indx]->Set(Value);
+            }
+        }
+        else PShell->Ack(retvCmdError);
+    }
 
     else PShell->Ack(retvCmdUnknown);
 }

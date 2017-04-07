@@ -24,3 +24,36 @@ public:
     void ITask();
 };
 extern App_t App;
+
+// Lauca is warmth, ringe is cold
+class Laucaringe_t {
+private:
+    const PinOutputPWM_t IChnl;
+    const PinOutput_t Dir1, Dir2;
+public:
+    void Init() {
+        IChnl.Init();
+        IChnl.Set(0);
+        Dir1.Init();
+        Dir2.Init();
+    }
+    void Set(int32_t Intencity) {
+        if(Intencity > 0) {
+            Dir1.SetHi();
+            Dir2.SetLo();
+        }
+        else if(Intencity < 0) {
+            Dir1.SetLo();
+            Dir2.SetHi();
+            Intencity = -Intencity;
+        }
+        else { // 0
+            Dir1.SetLo();
+            Dir2.SetLo();
+        }
+        IChnl.Set(Intencity);
+    }
+
+    Laucaringe_t(const PwmSetup_t APwmSetup, GPIO_TypeDef *APGPIO1, uint16_t APin1, GPIO_TypeDef *APGPIO2, uint16_t APin2) :
+                IChnl(APwmSetup), Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull)  {}
+};
