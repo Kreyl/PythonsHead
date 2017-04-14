@@ -30,6 +30,7 @@ class Laucaringe_t {
 private:
     const PinOutputPWM_t IChnl;
     const PinOutput_t Dir1, Dir2;
+    int32_t Target_mV;
 public:
     void Init() {
         IChnl.Init();
@@ -37,7 +38,8 @@ public:
         Dir1.Init();
         Dir2.Init();
     }
-    void Set(int32_t Intencity) {
+
+    void SetIntencity(int32_t Intencity) {
         if(Intencity > 0) {
             Dir1.SetHi();
             Dir2.SetLo();
@@ -54,9 +56,37 @@ public:
         IChnl.Set(Intencity);
     }
 
+    void SetTarget_mV(int32_t TargetValue) {
+        Target_mV = TargetValue;
+        if(TargetValue > 0) {
+            Dir1.SetHi();
+            Dir2.SetLo();
+            Target_mV = TargetValue;
+        }
+        else if(TargetValue < 0) {
+            Dir1.SetLo();
+            Dir2.SetHi();
+            Target_mV = -TargetValue;
+        }
+        else {
+            Dir1.SetLo();
+            Dir2.SetLo();
+            IChnl.Set(0);
+        }
+    }
+
+    void Adjust_mV(int32_t Current_mV) {
+        uint32_t CurrInt = IChnl.Get();
+        if(Current_mV > Target_mV and CurrInt > 0) CurrInt--;
+        else if(Current_mV < Target_mV and CurrInt < LR_PWM_TOP) CurrInt++;
+//        Uart.Printf("Curr=%d; Target=%d; Int=%d\r", Current_mV, Target_mV, CurrInt);
+        IChnl.Set(CurrInt);
+    }
+
     Laucaringe_t(const PwmSetup_t APwmSetup, GPIO_TypeDef *APGPIO1, uint16_t APin1, GPIO_TypeDef *APGPIO2, uint16_t APin2) :
                 IChnl(APwmSetup),
-                Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull)  {}
+                Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull),
+                Target_mV(0) {}
 };
 
 #define FILT_SZ     11

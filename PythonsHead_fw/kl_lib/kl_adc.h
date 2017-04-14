@@ -12,7 +12,7 @@
 
 #if ADC_REQUIRED
 
-#define ADC_MEASURE_PERIOD_MS   27
+#define ADC_MEASURE_PERIOD_MS   4
 
 #define ADC_MAX_VALUE           4095    // const: 2^12
 extern const uint8_t AdcChannels[ADC_CHANNEL_CNT];

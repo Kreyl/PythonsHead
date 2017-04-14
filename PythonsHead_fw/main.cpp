@@ -71,7 +71,7 @@ int main() {
     // Laucaringi
     for(uint8_t i=0; i<LR_CNT; i++) {
         Lr[i]->Init();
-        Lr[i]->Set(0);
+        Lr[i]->SetIntencity(0);
     }
 
     // ADC inputs
@@ -120,9 +120,11 @@ void App_t::ITask() {
                     }
                 }
 
-                if(Ready) Uart.Printf("%u %u %u %u   %u %u %u %u\r",
-                        VLr[0],VLr[1],VLr[2],VLr[3], VLr[4],VLr[5],VLr[6],VLr[7]);
-
+                if(Ready) {
+//                    Uart.Printf("%u %u %u %u   %u %u %u %u\r", VLr[0],VLr[1],VLr[2],VLr[3], VLr[4],VLr[5],VLr[6],VLr[7]);
+//                    for(int i=0; i<LR_CNT; i++) Lr[i]->Adjust_mV(VLr[i]);
+                    Lr[0]->Adjust_mV(VLr[0]);
+                }
 //                int32_t Vbat_mv = (2 * Adc.Adc2mV(VBat_adc, VRef_adc));   // Resistor divider
 //                if(Vbat_mv < 3500) SignalEvt(EVT_BATTERY_LOW);
             } // if not big diff
@@ -143,12 +145,23 @@ void App_t::OnCmd(Shell_t *PShell) {
     // Handle command
     if(PCmd->NameIs("Ping")) PShell->Ack(retvOk);
 
-    else if(PCmd->NameIs("Set")) {
+    else if(PCmd->NameIs("SetI")) {
         int32_t Indx, Value;
         if(PCmd->GetParams<int32_t>(2, &Indx, &Value) == retvOk) {
             if(Indx > 7) PShell->Ack(retvCmdError);
             else {
-                Lr[Indx]->Set(Value);
+                Lr[Indx]->SetIntencity(Value);
+            }
+        }
+        else PShell->Ack(retvCmdError);
+    }
+
+    else if(PCmd->NameIs("SetA")) {
+        int32_t Indx, Value;
+        if(PCmd->GetParams<int32_t>(2, &Indx, &Value) == retvOk) {
+            if(Indx > 7) PShell->Ack(retvCmdError);
+            else {
+                Lr[Indx]->SetTarget_mV(Value);
             }
         }
         else PShell->Ack(retvCmdError);
