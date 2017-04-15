@@ -43,15 +43,22 @@ static void rLvl1Thread(void *arg) {
 __noreturn
 void rLevel1_t::ITask() {
     while(true) {
-        // Wait for cmd
-//        uint8_t RxRslt = CC.Receive(27, &PktRx, &Rssi);
-//        if(RxRslt == retvOk) {
-//                Uart.Printf("Par %u %u; Rssi=%d\r", PktRx.ParamID, PktRx.ParamValue, Rssi);
-//                OnRadioRx();
-                // Transmit reply (pkt tx set up in function above)
+        // Receive cmd
+        uint8_t RxRslt = CC.Receive(36, &PktRx, &Rssi);
+        if(RxRslt == retvOk) {
+//            Uart.Printf("Rssi=%d\r", Rssi);
+            // Process cmd
+            if(PktRx.Cmd == 0) {    // GetInfo
+                PktInfoTx.Cmd = 0;
+                CC.Transmit(&PktInfoTx);
+            }
+            else if(PktRx.Cmd == 1) {   // Set param
+                PktTx.Cmd = PktRx.Cmd;
+                PktTx.Result = retvOk; // Who cares what really happened here...
                 CC.Transmit(&PktTx);
-                chThdSleepMilliseconds(450);
-//        } // if RxRslt ok
+                App.SetParam(PktRx.ParamID, PktRx.Value);
+            }
+        } // if ok
     } // while
 }
 #endif // task
@@ -62,15 +69,10 @@ uint8_t rLevel1_t::Init() {
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
 //    PinSetupOut(DBG_GPIO2, DBG_PIN2, omPushPull);
 #endif    // Init radioIC
-//    while(CC.Init() != retvOk) {
-//        chThdSleepMilliseconds(720);
-//    }
-
     if(CC.Init() == retvOk) {
-        CC.SetTxPower(CC_PwrMinus27dBm);
+        CC.SetTxPower(CC_PwrPlus5dBm);
         CC.SetPktSize(RPKT_LEN);
-        CC.SetChannel(2);
-//        CC.EnterPwrDown();
+        CC.SetChannel(3);
         // Thread
         chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, (tfunc_t)rLvl1Thread, NULL);
         return retvOk;

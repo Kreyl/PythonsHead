@@ -24,6 +24,8 @@
 #define I2C2_ENABLED    TRUE
 #define ADC_REQUIRED    TRUE
 #define SIMPLESENSORS_ENABLED   FALSE
+// App specific
+#define SNS_T_CNT       8
 
 #if 1 // ========================== GPIO =======================================
 // UART

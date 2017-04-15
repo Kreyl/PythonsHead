@@ -12,6 +12,7 @@ class App_t {
 private:
     thread_t *PThread; // Main thread
 public:
+    void SetParam(uint8_t ParamID, int32_t Value);
     void InitThread() { PThread = chThdGetSelfX(); }
     void SignalEvt(uint32_t EvtMsk) {
         chSysLock();

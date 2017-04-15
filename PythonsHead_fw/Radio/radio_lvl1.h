@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include <Radio/cc1101.h>
+#include "cc1101.h"
 #include "kl_lib.h"
 #include "ch.h"
 #include "kl_buf.h"
+#include "board.h"
 
 #if 0 // ========================= Signal levels ===============================
 // Python translation for db
@@ -55,29 +56,18 @@ static inline void Lvl250ToLvl1000(uint16_t *PLvl) {
 
 #if 1 // =========================== Pkt_t =====================================
 union rPkt_t  {
+    uint32_t DWord;
     struct {
-        uint32_t DWord;
-        uint8_t b;
-    } __packed;
-    // Real data
-    struct {
+        uint8_t Cmd;
         union {
-            // Host to Device
+            int16_t t[SNS_T_CNT];   // Temperature
             struct {
                 uint8_t ParamID;
-                uint8_t ParamValue;
+                int32_t Value;
             } __packed;
+            uint8_t Result;
         } __packed;
-        // Common
-        uint8_t ID;
     } __packed;
-    rPkt_t() : DWord(0) { }
-    rPkt_t(uint8_t AID, uint8_t AParamID, uint8_t AParamValue) :
-        ParamID(AParamID), ParamValue(AParamValue), ID(AID) { }
-    rPkt_t& operator = (const rPkt_t &Right) {
-        DWord = Right.DWord;
-        return *this;
-    }
 } __packed;
 #define RPKT_LEN    sizeof(rPkt_t)
 #endif
@@ -103,14 +93,11 @@ union rPkt_t  {
 
 class rLevel1_t {
 private:
-//    void TryToSleep(uint32_t SleepDuration) {
-//        if(SleepDuration >= MIN_SLEEP_DURATION_MS) CC.EnterPwrDown();
-//        chThdSleepMilliseconds(SleepDuration);
-//    }
+    rPkt_t PktRx, PktTx;
 public:
     int8_t Rssi;
+    rPkt_t PktInfoTx;
     uint8_t Init();
-    rPkt_t PktRx, PktTx;
     // Inner use
     void ITask();
 };

@@ -152,6 +152,21 @@ void App_t::ITask() {
     } // while true
 }
 
+void App_t::SetParam(uint8_t ParamID, int32_t Value) {
+    Uart.Printf("Param %u, v %d\r", ParamID, Value);
+//    switch(ParamID) {
+//        case parSetChannels:     LedIndication.EnableMsk = Value; break;
+//        case parSetTTop:         LedIndication.TTop = Value; break;
+//        case parSetTBottom:      LedIndication.TBottom = Value; break;
+//        case parSetLedsTop:      LedIndication.BrtTop = Value; break;
+//        case parSetLedsBottom:   LedIndication.BrtBottom = Value; break;
+//        case parFreq:
+//            for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(Value);
+//            break;
+//        default: return CMD_UNKNOWN;
+//    }
+}
+
 #if 1 // ======================= Command processing ============================
 void App_t::OnCmd(Shell_t *PShell) {
     Cmd_t *PCmd = &PShell->Cmd;

@@ -12,8 +12,8 @@
 // Bitrate
 //#define CC_BITRATE_10K
 //#define CC_BITRATE_38K4
-#define  CC_BITRATE_100K
-//#define CC_BITRATE_250K
+//#define  CC_BITRATE_100K
+#define CC_BITRATE_250K
 //#define CC_BITRATE_500K
 
 // ============================ Common use values ==============================
@@ -40,8 +40,8 @@
 
 // =================================== Common ==================================
 // ==== MDMCFG1 ==== 7 FEC_EN, 6:4 NUM_PREAMBLE, 3:2 not used, 1:0 CHANSPC_E
-#define CC_FEC_EN           0x80    // Fec enabled
-//#define CC_FEC_EN           0x00    // Fec disabled
+//#define CC_FEC_EN           0x80    // Fec enabled
+#define CC_FEC_EN           0x00    // Fec disabled
 #define CC_NUM_PREAMBLE     0x20    // 010 => 4 bytes of preamble
 #define CC_MDMCFG1_VALUE    (CC_FEC_EN | CC_NUM_PREAMBLE | CC_CHANSPC_E)
 
