@@ -20,7 +20,8 @@
 #define CRYSTAL_FREQ_HZ 16000000
 
 #define SYS_TIM_CLK     (Clk.APB1FreqHz) // OS timer settings
-#define I2C_REQUIRED    FALSE
+#define I2C1_ENABLED    TRUE
+#define I2C2_ENABLED    TRUE
 #define ADC_REQUIRED    TRUE
 #define SIMPLESENSORS_ENABLED   FALSE
 
@@ -33,6 +34,22 @@
 
 // Battery measuremrnt
 #define BAT_MEAS_ADC    GPIOC, 5
+
+// I2C
+#define I2C1_GPIO       GPIOB
+#define I2C1_SCL        6
+#define I2C1_SDA        7
+#define I2C1_AF         AF4 // I2C @ GPIOB
+#define I2C1_BAUDRATE   400000
+
+#define I2C2_GPIO       GPIOB
+#define I2C2_SCL        10
+#define I2C2_SDA        11
+#define I2C2_AF         AF4 // I2C @ GPIOB
+#define I2C2_BAUDRATE   100000
+
+// Radio: SPI, PGpio, Sck, Miso, Mosi, Cs, Gdo0
+#define CC_Setup0       SPI1, GPIOA, 5,6,7, 1, 0
 
 // LEDs
 #define LED_PIN         GPIOB, 9, omPushPull
@@ -90,11 +107,6 @@
 
 #endif // GPIO
 
-#if I2C_REQUIRED // ====================== I2C =================================
-#define I2C1_ENABLED     TRUE
-#define I2C_PIN       { GPIOA, 9, 10, I2C1_AF, I2C1_BAUDRATE, I2C1_DMA_TX, I2C1_DMA_RX}
-#endif
-
 #if 1 // ========================== USART ======================================
 #define UART            USART1
 #define UART_TX_REG     UART->DR
@@ -136,6 +148,15 @@
 #define UART_DMA_TX     STM32_DMA2_STREAM7
 #define UART_DMA_RX     STM32_DMA2_STREAM5
 #define UART_DMA_CHNL   4
+
+#if I2C1_ENABLED // ==== I2C1 ====
+#define I2C1_DMA_TX     STM32_DMA1_STREAM6
+#define I2C1_DMA_RX     STM32_DMA1_STREAM5
+#endif
+#if I2C2_ENABLED // ==== I2C2 ====
+#define I2C2_DMA_TX     STM32_DMA1_STREAM7
+#define I2C2_DMA_RX     STM32_DMA1_STREAM3
+#endif
 
 #if ADC_REQUIRED
 #define ADC_DMA         STM32_DMA2_STREAM0

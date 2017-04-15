@@ -5,14 +5,17 @@ using System.Drawing;
 namespace PythonControl {
     public enum ParamIDs { 
         SetChannels = 0,
-        SetTTop = 1, SetTBottom = 2,
+        SetTTopLeds = 1, SetTBottomLeds = 2,
         SetLedsTop = 3, SetLedsBottom = 4,
         SetFreq = 5,
+        EnableLeds = 6, EnableLRs = 7,
+        LRPoint1T = 8, LRPoint1Pwr = 9, LRPoint2T = 10, LRPoint2Pwr = 11,
     };
 
     public partial class MainForm : Form {
         private Periphery_t Periph;
         private int TTop = 45, TBottom = 18;
+        private int PwrBottom = -2000, PwrTop = 2000;
         private int FreqTop = 36, FreqBottom = 1;
         private byte ChnlMsk = 0xF7;
         public CmdQ_t CmdQ;
@@ -54,6 +57,25 @@ namespace PythonControl {
             Periph.TransmitterConnected = false;
         }
         #endregion
+
+        private bool CheckTextBox(TextBox Txtb, int MinValue, int MaxValue, out int Value) {
+            if(int.TryParse(Txtb.Text, out Value)) {
+                if(Value >= MinValue && Value <= MaxValue) {
+                    Txtb.BackColor = SystemColors.Window;
+                    return true;
+                }
+            }
+            Txtb.BackColor = Color.Red;
+            return false;
+        }
+
+        private void TxtbChecker(object sender, EventArgs e) {
+            TextBox Txtb = sender as TextBox;
+            if(int.TryParse(Txtb.Text, out int Value)) {
+                Txtb.BackColor = SystemColors.Window;
+            }
+            else Txtb.BackColor = Color.Red;
+        }
 
         #region ============================= Events ============================
         private void ProcessState() {
@@ -151,18 +173,20 @@ namespace PythonControl {
             if(IsOn) chart1.Series[0].Points[Channel - 1].Color = SystemColors.Highlight;
             else chart1.Series[0].Points[Channel - 1].Color = SystemColors.InactiveCaption;
         }
-        
-        private void BtnSendAllLeds_Click(object sender, EventArgs e) {
-            BtnTTopLeds_Click(null, null);
-            BtnTBottomLeds_Click(null, null);
-            BtnTopBlinkFreq_Click(null, null);
-            BtnBottomBlinkFreq_Click(null, null);
-            BtnFreqLeds_Click(null, null);
-            // Channels
+
+        #region ==== Enable/Disable ====
+        private void ChbEnableLeds_CheckedChanged(object sender, EventArgs e) {
             if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                CmdQ.Put(CmdSetParam(ParamIDs.SetChannels, ChnlMsk));
+                CmdQ.Put(CmdSetParam(ParamIDs.EnableLeds, chbEnableLeds.Checked? 1 : 0));
             }
         }
+
+        private void ChbEnableLR_CheckedChanged(object sender, EventArgs e) {
+            if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                CmdQ.Put(CmdSetParam(ParamIDs.EnableLRs, chbEnableLR.Checked ? 1 : 0));
+            }
+        }
+        #endregion
 
         #region ==== Frequency ====
         private void BtnFreqLeds_Click(object sender, EventArgs e) {
@@ -187,7 +211,7 @@ namespace PythonControl {
                 if(NewT > TBottom) {
                     // Send command
                     if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetTTop, NewT));
+                        CmdQ.Put(CmdSetParam(ParamIDs.SetTTopLeds, NewT));
                     }
                     // Change chart
                     chart1.ChartAreas[0].AxisY.Maximum = NewT;
@@ -201,7 +225,7 @@ namespace PythonControl {
                 if(NewT < TTop) {
                     // Send command
                     if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetTBottom, NewT));
+                        CmdQ.Put(CmdSetParam(ParamIDs.SetTBottomLeds, NewT));
                     }
                     // Change chart
                     chart1.ChartAreas[0].AxisY.Minimum = NewT;
@@ -225,7 +249,7 @@ namespace PythonControl {
                 if(NewF > FreqBottom) {
                     // Send command
                     if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetLedsTop, NewF));
+                        CmdQ.Put(CmdSetParam(ParamIDs.EnableLeds, NewF));
                     }
                     // Change variable
                     FreqTop = NewF;
@@ -249,9 +273,29 @@ namespace PythonControl {
         private void TxtbTopBlinkFreq_KeyPress(object sender, KeyPressEventArgs e) {
             if(e.KeyChar == '\r') BtnTopBlinkFreq_Click(null, null);
         }
-
+        
         private void TxtbBottomBlinkFreq_KeyPress(object sender, KeyPressEventArgs e) {
             if(e.KeyChar == '\r') BtnBottomBlinkFreq_Click(null, null);
+        }
+        #endregion
+
+        #region ======= Laucaringi  =======
+        private void BtnLRPoint1_Click(object sender, EventArgs e) {
+            if(CheckTextBox(TxtbLRTPoint1, TBottom, TTop, out int T) && CheckTextBox(TxtbLRPwrPoint1, PwrBottom, PwrTop, out int Pwr)) {
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.LRPoint1T, T));
+                    CmdQ.Put(CmdSetParam(ParamIDs.LRPoint1Pwr, Pwr));
+                }
+            }
+        }
+
+        private void BtnLRPoint2_Click(object sender, EventArgs e) {
+            if(CheckTextBox(TxtbLRTPoint2, TBottom, TTop, out int T) && CheckTextBox(TxtbLRPwrPoint2, PwrBottom, PwrTop, out int Pwr)) {
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.LRPoint2T, T));
+                    CmdQ.Put(CmdSetParam(ParamIDs.LRPoint2Pwr, Pwr));
+                }
+            }
         }
         #endregion
 

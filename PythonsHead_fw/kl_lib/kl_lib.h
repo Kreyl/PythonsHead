@@ -233,7 +233,7 @@ enum TmrKLType_t {tktOneShot, tktPeriodic};
 class TmrKL_t : private IrqHandler_t {
 private:
     virtual_timer_t Tmr;
-    void StartI() { chVTSetI(&Tmr, Period, TmrKLCallback, this); }
+    void StartI() { chVTSetI(&Tmr, Period, TmrKLCallback, this); }  // Will be reset before start
     thread_t *PThread;
     systime_t Period;
     eventmask_t EvtMsk;
@@ -245,24 +245,23 @@ private:
 public:
     void InitAndStart(thread_t *APThread) {
         PThread = APThread;
-        Start();
+        StartOrRestart();
     }
     void InitAndStart() {
         PThread = chThdGetSelfX();
-        Start();
+        StartOrRestart();
     }
 
     void Init(thread_t *APThread) { PThread = APThread; }
     void Init() { PThread = chThdGetSelfX(); }
 
-    void Start() {
+    void StartOrRestart() {
         chSysLock();
         StartI();
         chSysUnlock();
     }
-    void Start(systime_t NewPeriod) {
+    void StartOrRestart(systime_t NewPeriod) {
         chSysLock();
-        chVTResetI(&Tmr);
         Period = NewPeriod;
         StartI();
         chSysUnlock();
@@ -273,10 +272,10 @@ public:
         chSysUnlock();
     }
     void Stop() { chVTReset(&Tmr); }
-    void Restart() {
-        chVTReset(&Tmr);
-        Start();
-    }
+
+    void SetNewPeriod_ms(uint32_t NewPeriod) { Period = MS2ST(NewPeriod); }
+    void SetNewPeriod_s(uint32_t NewPeriod) { Period = S2ST(NewPeriod); }
+
     TmrKL_t(systime_t APeriod, eventmask_t AEvtMsk, TmrKLType_t AType) :
         PThread(nullptr), Period(APeriod), EvtMsk(AEvtMsk), TmrType(AType) {}
     // Dummy period is set
@@ -899,6 +898,8 @@ public:
 #endif // INDIVIDUAL_EXTI_IRQ_REQUIRED
     }
 
+    bool IsHi() { return PinIsHi(PGpio, PinN); }
+
     void SetTriggerType(ExtiTrigType_t ATriggerType) const {
         uint32_t IrqMsk = 1 << PinN;
         switch(ATriggerType) {
@@ -1099,7 +1100,7 @@ public:
         if(CPOL == cpolIdleHigh) PSpi->CR1 |= SPI_CR1_CPOL;     // CPOL
         if(CPHA == cphaSecondEdge) PSpi->CR1 |= SPI_CR1_CPHA;   // CPHA
         PSpi->CR1 |= ((uint16_t)Divider) << 3;                  // Clock divider
-#if defined STM32L1XX || defined STM32F10X_LD_VL || defined STM32F4XX
+#if defined STM32L1XX || defined STM32F10X_LD_VL || defined STM32F2XX || defined STM32F4XX
         if(BitNumber == bitn16) PSpi->CR1 |= SPI_CR1_DFF;
         PSpi->CR2 = 0;
 #elif defined STM32F030 || defined STM32F072xB || defined STM32L4XX
@@ -1119,6 +1120,7 @@ public:
     void WaitFTLVLZero() const { while(PSpi->SR & SPI_SR_FTLVL); }
 #endif
     void WaitBsyHi2Lo()  const { while(PSpi->SR & SPI_SR_BSY); }
+    void WaitTxEHi()     const { while(!(PSpi->SR & SPI_SR_TXE)); }
     void ClearRxBuf()    const { while(PSpi->SR & SPI_SR_RXNE) (void)PSpi->DR; }
     uint8_t ReadWriteByte(uint8_t AByte) const {
         *((volatile uint8_t*)&PSpi->DR) = AByte;
@@ -1146,7 +1148,7 @@ public:
 };
 #endif
 
-#if 0 // ====================== FLASH & EEPROM =================================
+#if 1 // ====================== FLASH & EEPROM =================================
 #define FLASH_LIB_KL
 #define EEPROM_BASE_ADDR    ((uint32_t)0x08080000)
 // ==== Flash keys ====
@@ -1165,38 +1167,14 @@ public:
 #define FLASH_OPTKEY2   ((uint32_t)0x24252627)
 
 #define FLASH_WAIT_TIMEOUT  36000
-class Flash_t {
-public:
-    static uint8_t GetStatus() {
-        if(FLASH->SR & FLASH_SR_BSY) return retvBusy;
-        else if(FLASH->SR & FLASH_SR_WRPERR) return retvWriteProtect;
-        else if(FLASH->SR & (uint32_t)0x1E00) return retvFail;
-        else return retvOk;
-    }
-    static uint8_t WaitForLastOperation() {
-        uint32_t Timeout = FLASH_WAIT_TIMEOUT;
-        while(Timeout--) {
-            // Get status
-            uint8_t status = GetStatus();
-            if(status != retvBusy) return status;
-        }
-        return retvTimeout;
-    }
-    static void UnlockEE() {
-        if(FLASH->PECR & FLASH_PECR_PELOCK) {
-            // Unlocking the Data memory and FLASH_PECR register access
-            chSysLock();
-            FLASH->PEKEYR = FLASH_PEKEY1;
-            FLASH->PEKEYR = FLASH_PEKEY2;
-            chSysUnlock();
-            FLASH->SR = FLASH_SR_WRPERR;        // Clear WriteProtectErr
-            FLASH->PECR &= ~FLASH_PECR_FTDW;    // Disable fixed time programming
-        }
-    }
-    static void LockEE() { FLASH->PECR |= FLASH_PECR_PELOCK; }
-};
+namespace Flash {
+    uint8_t GetStatus();
+    uint8_t WaitForLastOperation();
+    void UnlockEE();
+    void LockEE();
+}; // namespace
 
-class Eeprom_t : private Flash_t {
+class Eeprom_t {
 public:
     uint32_t Read32(uint32_t Addr) { return *((uint32_t*)(Addr + EEPROM_BASE_ADDR)); }
     uint8_t Write32(uint32_t Addr, uint32_t W);

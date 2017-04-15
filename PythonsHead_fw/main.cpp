@@ -11,9 +11,13 @@
 #include "led.h"
 #include "Sequences.h"
 #include "kl_adc.h"
+#include "radio_lvl1.h"
+#include "kl_i2c.h"
+#include "Settings.h"
 
 #if 1 // =========================== Locals ====================================
 App_t App;
+Settings_t Settings;
 
 LedOnOff_t LedState(LED_PIN);
 
@@ -59,6 +63,13 @@ int main() {
     Uart.Printf("\r%S %S\r\n", APP_NAME, BUILD_TIME);
     Clk.PrintFreqs();
 
+    // Settings
+    i2c2.Init();
+//    i2c2.ScanBus();
+    Settings.Init();
+    Settings.Read();
+    Settings.Print();
+
     // LEDs
     LedState.Init();
     LedState.On();
@@ -88,6 +99,9 @@ int main() {
     Adc.Init();
     Adc.EnableVRef();
     Adc.TmrInitAndStart();
+
+    // Radio
+    Radio.Init();
 
     // ==== Main cycle ====
     App.ITask();
@@ -122,8 +136,8 @@ void App_t::ITask() {
 
                 if(Ready) {
 //                    Uart.Printf("%u %u %u %u   %u %u %u %u\r", VLr[0],VLr[1],VLr[2],VLr[3], VLr[4],VLr[5],VLr[6],VLr[7]);
-//                    for(int i=0; i<LR_CNT; i++) Lr[i]->Adjust_mV(VLr[i]);
-                    Lr[0]->Adjust_mV(VLr[0]);
+                    for(int i=0; i<LR_CNT; i++) Lr[i]->Adjust_mV(VLr[i]);
+//                    Lr[0]->Adjust_mV(VLr[0]);
                 }
 //                int32_t Vbat_mv = (2 * Adc.Adc2mV(VBat_adc, VRef_adc));   // Resistor divider
 //                if(Vbat_mv < 3500) SignalEvt(EVT_BATTERY_LOW);
@@ -144,6 +158,19 @@ void App_t::OnCmd(Shell_t *PShell) {
 //    Uart.Printf("\r%S\r", PCmd->Name);
     // Handle command
     if(PCmd->NameIs("Ping")) PShell->Ack(retvOk);
+
+    else if(PCmd->NameIs("ee")) Settings.Read();
+
+    else if(PCmd->NameIs("SetLed")) {
+        int32_t Indx, Value;
+        if(PCmd->GetParams<int32_t>(2, &Indx, &Value) == retvOk) {
+            if(Indx >= 0 and Indx < PARAM_CNT) {
+                PShell->Ack(Settings.SetLedParam(Indx, Value));
+            }
+            else PShell->Ack(retvCmdError);
+        }
+        else PShell->Ack(retvCmdError);
+    }
 
     else if(PCmd->NameIs("SetI")) {
         int32_t Indx, Value;
