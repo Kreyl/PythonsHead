@@ -14,10 +14,13 @@
 #include "radio_lvl1.h"
 #include "kl_i2c.h"
 #include "Settings.h"
+#include "OmronD6Tt.h"
 
 #if 1 // =========================== Locals ====================================
 App_t App;
 Settings_t Settings;
+TmrKL_t TmrSns {MS2ST(180), EVT_SNS, tktPeriodic};
+
 
 LedOnOff_t LedState(LED_PIN);
 
@@ -63,6 +66,10 @@ int main() {
     Uart.Printf("\r%S %S\r\n", APP_NAME, BUILD_TIME);
     Clk.PrintFreqs();
 
+    // Sns
+    i2c1.Init();
+//    i2c1.ScanBus();
+
     // Settings
     i2c2.Init();
 //    i2c2.ScanBus();
@@ -103,6 +110,8 @@ int main() {
     // Radio
     Radio.Init();
 
+    TmrSns.InitAndStart();
+
     // ==== Main cycle ====
     App.ITask();
 }
@@ -111,6 +120,24 @@ __noreturn
 void App_t::ITask() {
     while(true) {
         uint32_t Evt = chEvtWaitAny(ALL_EVENTS);
+
+        if(Evt & EVT_SNS) {
+            LedState.Off();
+            if(Sns.ReadData() == retvOk) {
+                // Copy data for transmitting
+                chSysLock();
+                Radio.PktInfoTx.Cmd = 0;    // 0 means GetInfo
+                for(uint8_t i=0; i<SNS_T_CNT; i++) Radio.PktInfoTx.t[i] = Sns.Data.Pix[i];
+                chSysUnlock();
+//                Uart.Printf("%03d ", Sns.Data.Temperature);
+//                for(uint8_t i=0; i<8; i++) Uart.Printf("%03d ", Sns.Data.Pix[i]);
+//                Uart.Printf("\r\n");
+                // Process indication
+//                LedIndication.Process(&Sns.Data.Pix[0]);
+            }
+            else Sns.Restart();
+            LedState.On();
+        }
 
 #if ADC_REQUIRED
         if(Evt & EVT_SAMPLING) Adc.StartMeasurement();

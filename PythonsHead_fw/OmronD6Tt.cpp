@@ -17,5 +17,5 @@ uint8_t OmronD6T_t::ReadData() {
 }
 
 void OmronD6T_t::Restart() {
-//    i2c->Reset();
+    i2c->Reset();
 }

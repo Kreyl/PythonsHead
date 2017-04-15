@@ -56,6 +56,10 @@ public:
     void ScanBus();
     void Standby();
     void Resume();
+    void Reset() {
+        Standby();
+        Resume();
+    }
     uint8_t CheckAddress(uint32_t Addr);
     uint8_t Write     (uint8_t Addr, uint8_t *WPtr1, uint8_t WLength1);
     uint8_t WriteRead (uint8_t Addr, uint8_t *WPtr,  uint8_t WLength,  uint8_t *RPtr, uint8_t RLength);
