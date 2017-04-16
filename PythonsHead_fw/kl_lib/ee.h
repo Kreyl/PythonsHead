@@ -49,11 +49,19 @@ public:
     EE_t(i2c_t *pi2c) : i2c(pi2c) {}
 #endif
 
-    uint8_t Read (uint8_t MemAddr, void *Ptr, uint32_t Length) const {
+    uint8_t Read(uint8_t MemAddr, void *Ptr, uint32_t Length) const {
         Resume();
         uint8_t Rslt = i2c->WriteRead(EE_I2C_ADDR, &MemAddr, 1, (uint8_t*)Ptr, Length);
         Standby();
 //        Uart.Printf("Read: %u\r", Rslt);
+        return Rslt;
+    }
+
+    template <typename T>
+    uint8_t Read(uint8_t MemAddr, T* Ptr) const {
+        Resume();
+        uint8_t Rslt = i2c->WriteRead(EE_I2C_ADDR, &MemAddr, 1, (uint8_t*)Ptr, sizeof(T));
+        Standby();
         return Rslt;
     }
 
@@ -99,5 +107,10 @@ public:
         } while(i2c->CheckAddress(EE_I2C_ADDR) != retvOk);
         Standby();
         return retvOk;
+    }
+
+    template <typename T>
+    uint8_t Write(uint8_t MemAddr, T *Ptr) const {
+        return Write(MemAddr, Ptr, sizeof(T));
     }
 };

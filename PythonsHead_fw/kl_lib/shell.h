@@ -100,6 +100,8 @@ public:
     }
 };
 
+#define EOL     "\r\n"
+
 class Shell_t {
 protected:
 	thread_t *IPThd;
@@ -114,4 +116,5 @@ public:
 	virtual void Printf(const char *S, ...);
 	void Reply(const char* CmdCode, int32_t Data) { Printf("%S,%d\r\n", CmdCode, Data); }
 	void Ack(int32_t Result) { Printf("Ack %d\r\n", Result); }
+	void Eol() { Printf(EOL); }
 };

@@ -77,16 +77,18 @@ public:
     }
 
     void Adjust_mV(int32_t Current_mV) {
-        uint32_t CurrInt = IChnl.Get();
-        if(Current_mV > Target_mV and CurrInt > 0) CurrInt--;
-        else if(Current_mV < Target_mV and CurrInt < LR_PWM_TOP) CurrInt++;
+        if(Target_mV != 0) {
+            uint32_t CurrInt = IChnl.Get();
+            if(Current_mV > Target_mV and CurrInt > 0) CurrInt--;
+            else if(Current_mV < Target_mV and CurrInt < LR_PWM_TOP) CurrInt++;
 //        Uart.Printf("Curr=%d; Target=%d; Int=%d\r", Current_mV, Target_mV, CurrInt);
-        IChnl.Set(CurrInt);
+            IChnl.Set(CurrInt);
+        }
     }
 
     Laucaringe_t(const PwmSetup_t APwmSetup, GPIO_TypeDef *APGPIO1, uint16_t APin1, GPIO_TypeDef *APGPIO2, uint16_t APin2) :
                 IChnl(APwmSetup),
-                Dir1(APGPIO1, APin1, omPushPull), Dir2(APGPIO2, APin2, omPushPull),
+                Dir1(APGPIO1, APin1, omOpenDrain), Dir2(APGPIO2, APin2, omOpenDrain),
                 Target_mV(0) {}
 };
 

@@ -195,6 +195,7 @@
             this.cbCh8Leds.TabIndex = 7;
             this.cbCh8Leds.Tag = "8";
             this.cbCh8Leds.UseVisualStyleBackColor = true;
+            this.cbCh8Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh7Leds
             // 
@@ -207,6 +208,7 @@
             this.cbCh7Leds.TabIndex = 6;
             this.cbCh7Leds.Tag = "7";
             this.cbCh7Leds.UseVisualStyleBackColor = true;
+            this.cbCh7Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh6Leds
             // 
@@ -219,6 +221,7 @@
             this.cbCh6Leds.TabIndex = 5;
             this.cbCh6Leds.Tag = "6";
             this.cbCh6Leds.UseVisualStyleBackColor = true;
+            this.cbCh6Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh5Leds
             // 
@@ -231,6 +234,7 @@
             this.cbCh5Leds.TabIndex = 4;
             this.cbCh5Leds.Tag = "5";
             this.cbCh5Leds.UseVisualStyleBackColor = true;
+            this.cbCh5Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh4Leds
             // 
@@ -243,6 +247,7 @@
             this.cbCh4Leds.TabIndex = 3;
             this.cbCh4Leds.Tag = "4";
             this.cbCh4Leds.UseVisualStyleBackColor = true;
+            this.cbCh4Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh3Leds
             // 
@@ -255,6 +260,7 @@
             this.cbCh3Leds.TabIndex = 2;
             this.cbCh3Leds.Tag = "3";
             this.cbCh3Leds.UseVisualStyleBackColor = true;
+            this.cbCh3Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh2Leds
             // 
@@ -267,6 +273,7 @@
             this.cbCh2Leds.TabIndex = 1;
             this.cbCh2Leds.Tag = "2";
             this.cbCh2Leds.UseVisualStyleBackColor = true;
+            this.cbCh2Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // cbCh1Leds
             // 
@@ -279,6 +286,7 @@
             this.cbCh1Leds.TabIndex = 0;
             this.cbCh1Leds.Tag = "1";
             this.cbCh1Leds.UseVisualStyleBackColor = true;
+            this.cbCh1Leds.CheckedChanged += new System.EventHandler(this.CbChLeds_CheckedChanged);
             // 
             // panel1
             // 
@@ -328,10 +336,10 @@
             this.BtnLRPoint2.UseVisualStyleBackColor = true;
             this.BtnLRPoint2.Click += new System.EventHandler(this.BtnLRPoint2_Click);
             // 
-            // TxtbLRPPoint2
+            // TxtbLRPwrPoint2
             // 
             this.TxtbLRPwrPoint2.Location = new System.Drawing.Point(92, 49);
-            this.TxtbLRPwrPoint2.Name = "TxtbLRPPoint2";
+            this.TxtbLRPwrPoint2.Name = "TxtbLRPwrPoint2";
             this.TxtbLRPwrPoint2.Size = new System.Drawing.Size(49, 20);
             this.TxtbLRPwrPoint2.TabIndex = 3;
             this.TxtbLRPwrPoint2.Text = "1500";
@@ -390,10 +398,10 @@
             this.BtnLRPoint1.UseVisualStyleBackColor = true;
             this.BtnLRPoint1.Click += new System.EventHandler(this.BtnLRPoint1_Click);
             // 
-            // TxtbLRPPoint1
+            // TxtbLRPwrPoint1
             // 
             this.TxtbLRPwrPoint1.Location = new System.Drawing.Point(92, 49);
-            this.TxtbLRPwrPoint1.Name = "TxtbLRPPoint1";
+            this.TxtbLRPwrPoint1.Name = "TxtbLRPwrPoint1";
             this.TxtbLRPwrPoint1.Size = new System.Drawing.Size(49, 20);
             this.TxtbLRPwrPoint1.TabIndex = 3;
             this.TxtbLRPwrPoint1.Text = "-1500";

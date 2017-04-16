@@ -84,7 +84,7 @@ namespace PythonControl {
                 lblPythonReplying.Visible = true;  // Transmitter connected, but no reply
                 if(Periph.PythonOnline) {
                     lblPythonReplying.Text = "Питон на связи";
-                    timerHeartBeat.Interval = 100;
+                    timerHeartBeat.Interval = 108;
                 }
                 else {
                     lblPythonReplying.Text = "Питон не отвечает";
