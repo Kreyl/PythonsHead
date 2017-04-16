@@ -23,10 +23,12 @@ const EE_t ee { &i2c2 };
 
 enum ParamID_t {
     parSetChannels = 0,
-    parSetTTop = 1, parSetTBottom = 2,
-    parSetLedsTop = 3, parSetLedsBottom = 4,
-    parFreq = 5,
-    parEnableLeds = 6, parEnableLRs = 7,
+    // Leds
+    parEnableLeds = 1,
+    parFreq = 2,
+    parLedPoint1T = 3, parLedPoint1Pwr = 4, parLedPoint2T = 5, parLedPoint2Pwr = 6,
+    // Laucaringi
+    parEnableLRs = 7,
     parLRPoint1T = 8, parLRPoint1Pwr = 9, parLRPoint2T = 10, parLRPoint2Pwr = 11,
 };
 
@@ -63,22 +65,22 @@ Filter_t Filt[LR_CNT];
 
 int32_t EnableMsk = 0xFF;
 bool ChEnabled(int n) { return (EnableMsk & (1 << (7 - n))); }
-
-class LedIndication_t {
-public:
-    int32_t BrtBottom = 1, BrtTop = 100;
-    int32_t TBottom = 18, TTop = 36;
-    bool Enabled;
-    void Process(int16_t *pt);
-} LedIndication;
+int32_t SFreq = 0;
 
 struct TemperaturePwrPoint_t {
     int32_t T, Pwr;
-    void Check() {
-        if(T < 11 or T > 80) T = 18;
-        if(Pwr < -2000 or Pwr > 2000) Pwr = 0;
+    void Check(int32_t PwrBottom, int32_t PwrTop) {
+        if(T < 11 or T > 90) T = 18;
+        if(Pwr < PwrBottom or Pwr > PwrTop) Pwr = 0;
     }
 };
+
+class LedIndication_t {
+public:
+    TemperaturePwrPoint_t Point1, Point2;
+    bool Enabled;
+    void Process(int16_t *pt);
+} LedIndication;
 
 class LRIndication_t {
 public:
@@ -233,7 +235,7 @@ void LedIndication_t::Process(int16_t *pt) {
     if(Enabled) {
         for(int i=0; i<SNS_T_CNT; i++) {
             if(ChEnabled(i)) { // Check if this channel required
-                int32_t Brt = CalcProportion(TBottom, TTop, BrtBottom, BrtTop, pt[i]);
+                int32_t Brt = CalcProportion(Point1.T, Point2.T, Point1.Pwr, Point2.Pwr, pt[i]);
 //                Uart.Printf("%u  t=%d, v=%d\r", i, t, Brt);
                 Led[i]->Set(Brt);
             }
@@ -261,16 +263,16 @@ void LRIndication_t::Process(int16_t *pt) {
 #define ADDR_Channels       0
 
 #define ADDR_LedsFreq       4
-#define ADDR_BrtBottom      8
-#define ADDR_BrtTop         12
-#define ADDR_TBottom        16
-#define ADDR_TTop           20
+#define ADDR_LedsPoint1_T   8
+#define ADDR_LedsPoint1_Pwr 12
+#define ADDR_LedsPoint2_T   16
+#define ADDR_LedsPoint2_Pwr 20
 #define ADDR_LedsEnabled    24
 
-#define ADDR_Point1_T       28
-#define ADDR_Point1_Pwr     32
-#define ADDR_Point2_T       36
-#define ADDR_Point2_Pwr     40
+#define ADDR_LRPoint1_T     28
+#define ADDR_LRPoint1_Pwr   32
+#define ADDR_LRPoint2_T     36
+#define ADDR_LRPoint2_Pwr   40
 #define ADDR_LREnabled      44
 
 void LoadSettings() {
@@ -279,33 +281,28 @@ void LoadSettings() {
     ee.Read<int32_t>(ADDR_Channels, &EnableMsk);
     if(EnableMsk < 0 or EnableMsk > 0xFF) EnableMsk = 0xFF;
     // Leds
-    int32_t Freq;
-    ee.Read<int32_t>(ADDR_LedsFreq, &Freq);
-    if(Freq < 1 or Freq > 4000) Freq = 4;
-    for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(Freq);
-
-    ee.Read<int32_t>(ADDR_BrtBottom, &LedIndication.BrtBottom);
-    if(LedIndication.BrtBottom < 0 or LedIndication.BrtBottom > 100) LedIndication.BrtBottom = 0;
-    ee.Read<int32_t>(ADDR_BrtTop, &LedIndication.BrtTop);
-    if(LedIndication.BrtTop < 0 or LedIndication.BrtTop > 100) LedIndication.BrtTop = 0;
-    ee.Read<int32_t>(ADDR_TBottom, &LedIndication.TBottom);
-    if(LedIndication.TBottom < 10 or LedIndication.TBottom > 80) LedIndication.TBottom = 18;
-    ee.Read<int32_t>(ADDR_TTop, &LedIndication.TTop);
-    if(LedIndication.TTop < 10 or LedIndication.TTop > 80) LedIndication.TTop = 45;
     ee.Read<int32_t>(ADDR_LedsEnabled, &En);
     LedIndication.Enabled = (En == 1);
+    ee.Read<int32_t>(ADDR_LedsFreq, &SFreq);
+    if(SFreq < 1 or SFreq > 4000) SFreq = 4;
+    for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(SFreq);
+
+    ee.Read(ADDR_LedsPoint1_T, &LedIndication.Point1, 8);
+    LedIndication.Point1.Check(0, 100);
+    ee.Read(ADDR_LedsPoint2_T, &LedIndication.Point2, 8);
+    LedIndication.Point2.Check(0, 100);
 
     // Laucaringi
-    ee.Read(ADDR_Point1_T, &LRIndication.Point1, 8);
-    LRIndication.Point1.Check();
-    ee.Read(ADDR_Point2_T, &LRIndication.Point2, 8);
-    LRIndication.Point2.Check();
     ee.Read<int32_t>(ADDR_LREnabled, &En);
     LRIndication.Enabled = (En == 1);
+    ee.Read(ADDR_LRPoint1_T, &LRIndication.Point1, 8);
+    LRIndication.Point1.Check(-2000, 2000);
+    ee.Read(ADDR_LRPoint2_T, &LRIndication.Point2, 8);
+    LRIndication.Point2.Check(-2000, 2000);
 
     Uart.Printf("Channels: %X\r", EnableMsk);
-    Uart.Printf("Freq: %d;\rBrtBottom: %d; BrtTop: %d; TBottom: %d; TTop: %d; Enabled: %d\r", Freq,
-            LedIndication.BrtBottom, LedIndication.BrtTop, LedIndication.TBottom, LedIndication.TTop, LedIndication.Enabled);
+    Uart.Printf("Freq: %d;\rPoint1 T: %d; Point1 Pwr: %d; Point2 T: %d; Point2 Pwr: %d; Enabled: %d\r", SFreq,
+            LedIndication.Point1.T, LedIndication.Point1.Pwr, LedIndication.Point2.T, LedIndication.Point2.Pwr, LedIndication.Enabled);
     Uart.Printf("Point1 T: %d; Point1 Pwr: %d; Point2 T: %d; Point2 Pwr: %d; Enabled: %d\r",
             LRIndication.Point1.T, LRIndication.Point1.Pwr, LRIndication.Point2.T, LRIndication.Point2.Pwr, LRIndication.Enabled);
 }
@@ -314,35 +311,38 @@ void App_t::SetParam(uint8_t ParamID, int32_t Value) {
     Uart.Printf("Param %u, v %d\r", ParamID, Value);
     int32_t dw32;
     switch(ParamID) {
+        // ==== Common ====
+        case parSetChannels:
+            EnableMsk = Value;
+            ee.Write<int32_t>(ADDR_Channels, &Value);
+            break;
         // ==== LEDs ====
         case parEnableLeds:
             LedIndication.Enabled = (Value != 0);
             dw32 = LedIndication.Enabled? 1 : 0;
             ee.Write<int32_t>(ADDR_LedsEnabled, &dw32);
             break;
-        case parSetChannels:
-            EnableMsk = Value;
-            ee.Write<int32_t>(ADDR_Channels, &Value);
-            break;
-        case parSetTTop:
-            LedIndication.TTop = Value;
-            ee.Write<int32_t>(ADDR_TTop, &Value);
-            break;
-        case parSetTBottom:
-            LedIndication.TBottom = Value;
-            ee.Write<int32_t>(ADDR_TBottom, &Value);
-            break;
-        case parSetLedsTop:
-            LedIndication.BrtTop = Value;
-            ee.Write<int32_t>(ADDR_BrtTop, &Value);
-            break;
-        case parSetLedsBottom:
-            LedIndication.BrtBottom = Value;
-            ee.Write<int32_t>(ADDR_BrtBottom, &Value);
-            break;
         case parFreq:
+            SFreq = Value;
             for(uint8_t i=0; i<8; i++) Led[i]->SetFrequencyHz(Value);
             ee.Write<int32_t>(ADDR_LedsFreq, &Value);
+            break;
+
+        case parLedPoint1T:
+            LedIndication.Point1.T = Value;
+            ee.Write<int32_t>(ADDR_LedsPoint1_T, &Value);
+            break;
+        case parLedPoint2T:
+            LedIndication.Point2.T = Value;
+            ee.Write<int32_t>(ADDR_LedsPoint2_T, &Value);
+            break;
+        case parLedPoint1Pwr:
+            LedIndication.Point1.Pwr = Value;
+            ee.Write<int32_t>(ADDR_LedsPoint1_Pwr, &Value);
+            break;
+        case parLedPoint2Pwr:
+            LedIndication.Point2.Pwr = Value;
+            ee.Write<int32_t>(ADDR_LedsPoint2_Pwr, &Value);
             break;
 
         // ==== Laucaringi ====
@@ -353,24 +353,47 @@ void App_t::SetParam(uint8_t ParamID, int32_t Value) {
             break;
         case parLRPoint1T:
             LRIndication.Point1.T = Value;
-            ee.Write<int32_t>(ADDR_Point1_T, &Value);
+            ee.Write<int32_t>(ADDR_LRPoint1_T, &Value);
             break;
         case parLRPoint2T:
             LRIndication.Point2.T = Value;
-            ee.Write<int32_t>(ADDR_Point2_T, &Value);
+            ee.Write<int32_t>(ADDR_LRPoint2_T, &Value);
             break;
         case parLRPoint1Pwr:
             LRIndication.Point1.Pwr = Value;
-            ee.Write<int32_t>(ADDR_Point1_Pwr, &Value);
+            ee.Write<int32_t>(ADDR_LRPoint1_Pwr, &Value);
             break;
         case parLRPoint2Pwr:
             LRIndication.Point2.Pwr = Value;
-            ee.Write<int32_t>(ADDR_Point2_Pwr, &Value);
+            ee.Write<int32_t>(ADDR_LRPoint2_Pwr, &Value);
             break;
         default: break;
     }
 }
 
+uint8_t App_t::GetParam(uint8_t ParamID, int32_t *PValue) {
+    uint8_t Rslt = retvOk;
+    switch(ParamID) {
+        // ==== Common ====
+        case parSetChannels:  *PValue = EnableMsk; break;
+        // ==== LEDs ====
+        case parEnableLeds:   *PValue = LedIndication.Enabled? 1 : 0; break;
+        case parFreq:         *PValue = SFreq; break;
+        case parLedPoint1T:   *PValue = LedIndication.Point1.T; break;
+        case parLedPoint1Pwr: *PValue = LedIndication.Point1.Pwr; break;
+        case parLedPoint2T:   *PValue = LedIndication.Point2.T; break;
+        case parLedPoint2Pwr: *PValue = LedIndication.Point2.Pwr; break;
+        // ==== Laucaringi ====
+        case parEnableLRs:    *PValue = LRIndication.Enabled? 1 : 0; break;
+        case parLRPoint1T:    *PValue = LRIndication.Point1.T; break;
+        case parLRPoint1Pwr:  *PValue = LRIndication.Point1.Pwr; break;
+        case parLRPoint2T:    *PValue = LRIndication.Point2.T; break;
+        case parLRPoint2Pwr:  *PValue = LRIndication.Point2.Pwr; break;
+
+        default: Rslt = retvBadValue; break;
+    }
+    return Rslt;
+}
 #endif
 
 

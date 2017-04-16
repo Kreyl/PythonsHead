@@ -48,16 +48,24 @@ void rLevel1_t::ITask() {
         if(RxRslt == retvOk) {
 //            Uart.Printf("Rssi=%d\r", Rssi);
             // Process cmd
-            if(PktRx.Cmd == 0) {    // GetInfo
-                PktInfoTx.Cmd = 0;
-                CC.Transmit(&PktInfoTx);
-            }
-            else if(PktRx.Cmd == 1) {   // Set param
-                PktTx.Cmd = PktRx.Cmd;
-                PktTx.Result = retvOk; // Who cares what really happened here...
-                CC.Transmit(&PktTx);
-                App.SetParam(PktRx.ParamID, PktRx.Value);
-            }
+            switch(PktRx.Cmd) {
+                case 0: // GetInfo
+                    PktInfoTx.Cmd = 0;
+                    CC.Transmit(&PktInfoTx);
+                    break;
+                case 1: // Set param
+                    PktTx.Cmd = PktRx.Cmd;
+                    PktTx.Result = retvOk; // Who cares what really happened here...
+                    CC.Transmit(&PktTx);
+                    App.SetParam(PktRx.ParamID, PktRx.Value);
+                    break;
+                case 2: // Get param
+                    PktTx.Cmd = PktRx.Cmd;
+                    PktTx.Result = App.GetParam(PktRx.ParamID, &PktTx.Value);
+                    CC.Transmit(&PktTx);
+                    break;
+                default: break;
+            } // switch
         } // if ok
     } // while
 }

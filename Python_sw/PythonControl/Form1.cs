@@ -5,18 +5,20 @@ using System.Drawing;
 namespace PythonControl {
     public enum ParamIDs { 
         SetChannels = 0,
-        SetTTopLeds = 1, SetTBottomLeds = 2,
-        SetLedsTop = 3, SetLedsBottom = 4,
-        SetFreq = 5,
-        EnableLeds = 6, EnableLRs = 7,
+        // Leds
+        EnableLeds = 1,
+        SetFreq = 2,
+        LedPoint1T = 3, LedPoint1Pwr = 4, LedPoint2T = 5, LedPoint2Pwr = 6,
+        // Laucaringi
+        EnableLRs = 7,
         LRPoint1T = 8, LRPoint1Pwr = 9, LRPoint2T = 10, LRPoint2Pwr = 11,
     };
 
     public partial class MainForm : Form {
+        bool AllowUpdate = true;
         private Periphery_t Periph;
-        private int TTop = 45, TBottom = 18;
+        private int TTop = 90, TBottom = 10;
         private int PwrBottom = -2000, PwrTop = 2000;
-        private int FreqTop = 36, FreqBottom = 1;
         private byte ChnlMsk = 0xF7;
         public CmdQ_t CmdQ;
 
@@ -28,11 +30,6 @@ namespace PythonControl {
             };
             CmdQ = new CmdQ_t();
 
-            chart1.ChartAreas[0].AxisY.Minimum = TBottom;
-            chart1.ChartAreas[0].AxisY.Maximum = TTop;
-            txtbTTopLeds.Text = TTop.ToString();
-            txtbTBottomLeds.Text = TBottom.ToString();
-
             cbCh8Leds.Checked = (ChnlMsk & (1 << 0)) != 0;
             cbCh7Leds.Checked = (ChnlMsk & (1 << 1)) != 0;
             cbCh6Leds.Checked = (ChnlMsk & (1 << 2)) != 0;
@@ -41,7 +38,6 @@ namespace PythonControl {
             cbCh3Leds.Checked = (ChnlMsk & (1 << 5)) != 0;
             cbCh2Leds.Checked = (ChnlMsk & (1 << 6)) != 0;
             cbCh1Leds.Checked = (ChnlMsk & (1 << 7)) != 0;
-
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -57,6 +53,60 @@ namespace PythonControl {
             Periph.TransmitterConnected = false;
         }
         #endregion
+
+        private bool GetParamsFromPython() {
+            AllowUpdate = false;
+            bool Rslt = false;
+            if(Periph.GetParam(ParamIDs.SetChannels, out int Value)) {
+                ChnlMsk = (byte)Value;
+                cbCh8Leds.Checked = (ChnlMsk & (1 << 0)) != 0;
+                cbCh7Leds.Checked = (ChnlMsk & (1 << 1)) != 0;
+                cbCh6Leds.Checked = (ChnlMsk & (1 << 2)) != 0;
+                cbCh5Leds.Checked = (ChnlMsk & (1 << 3)) != 0;
+                cbCh4Leds.Checked = (ChnlMsk & (1 << 4)) != 0;
+                cbCh3Leds.Checked = (ChnlMsk & (1 << 5)) != 0;
+                cbCh2Leds.Checked = (ChnlMsk & (1 << 6)) != 0;
+                cbCh1Leds.Checked = (ChnlMsk & (1 << 7)) != 0;
+                // LEDs
+                if(Periph.GetParam(ParamIDs.EnableLeds, out Value)) {
+                    chbEnableLeds.Checked = (Value != 0);
+                    if(Periph.GetParam(ParamIDs.SetFreq, out Value)) {
+                        TxtbFreqLeds.Text = Value.ToString();
+                        if(Periph.GetParam(ParamIDs.LedPoint1T, out Value)) {
+                            TxtbLedTPoint1.Text = Value.ToString();
+                            if(Periph.GetParam(ParamIDs.LedPoint1Pwr, out Value)) {
+                                TxtbLedPwrPoint1.Text = Value.ToString();
+                                if(Periph.GetParam(ParamIDs.LedPoint2T, out Value)) {
+                                    TxtbLedTPoint2.Text = Value.ToString();
+                                    if(Periph.GetParam(ParamIDs.LedPoint2Pwr, out Value)) {
+                                        TxtbLedPwrPoint2.Text = Value.ToString();
+                                        // Laucaringi
+                                        if(Periph.GetParam(ParamIDs.EnableLRs, out Value)) {
+                                            chbEnableLR.Checked = (Value != 0);
+                                            if(Periph.GetParam(ParamIDs.LRPoint1T, out Value)) {
+                                                TxtbLRTPoint1.Text = Value.ToString();
+                                                if(Periph.GetParam(ParamIDs.LRPoint1Pwr, out Value)) {
+                                                    TxtbLRPwrPoint1.Text = Value.ToString();
+                                                    if(Periph.GetParam(ParamIDs.LRPoint2T, out Value)) {
+                                                        TxtbLRTPoint2.Text = Value.ToString();
+                                                        if(Periph.GetParam(ParamIDs.LRPoint2Pwr, out Value)) {
+                                                            TxtbLRPwrPoint2.Text = Value.ToString();
+                                                            Rslt = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            AllowUpdate = true;
+            return Rslt;
+        }
 
         private bool CheckTextBox(TextBox Txtb, int MinValue, int MaxValue, out int Value) {
             if(int.TryParse(Txtb.Text, out Value)) {
@@ -78,41 +128,56 @@ namespace PythonControl {
         }
 
         #region ============================= Events ============================
+        private bool TransmitterWasConnected = false, PythonWasOnline = false;
         private void ProcessState() {
-            if(Periph.TransmitterConnected) {
+            // Transmitter state
+            if(Periph.TransmitterConnected && !TransmitterWasConnected) {
                 StatusLabel.Text = "Передатчик подключен";
-                lblPythonReplying.Visible = true;  // Transmitter connected, but no reply
-                if(Periph.PythonOnline) {
-                    lblPythonReplying.Text = "Питон на связи";
+                lblPythonReplying.Visible = true;
+                TransmitterWasConnected = true;
+            }
+            else if(!Periph.TransmitterConnected && TransmitterWasConnected) {
+                StatusLabel.Text = "Передатчик не подключен";
+                lblPythonReplying.Visible = false;
+                timerHeartBeat.Interval = 1000;
+                TransmitterWasConnected = false;
+            }
+
+            // Python state
+            if(Periph.TransmitterConnected) {
+                if(Periph.PythonOnline && !PythonWasOnline) {
                     timerHeartBeat.Interval = 108;
+                    lblPythonReplying.Text = "Питон на связи";
+                    PythonWasOnline = true;
                 }
-                else {
+                else if(!Periph.PythonOnline && PythonWasOnline) {
                     lblPythonReplying.Text = "Питон не отвечает";
                     timerHeartBeat.Interval = 1000;
+                    PythonWasOnline = false;
                 }
-            }
-            else {  // Transmitter disconnected
-                lblPythonReplying.Visible = false;
-                StatusLabel.Text = "Передатчик не подключен";
-                timerHeartBeat.Interval = 1000;
             }
         }
 
         private void TimerHeartBeat_Tick(object sender, EventArgs e) {
             // Check if device connected
             if(Periph.TransmitterConnected) {
-                // Send commands until q is empty
-                while(CmdQ.Get(out string Cmd)) {
-                    if(Periph.SendCmd(Cmd) == false) goto EndOfTick; // Some failure
-                }
-                // Q is empty, Request info
-                if(Periph.GetInfo()) {
-                    // Show reply
-                    for(int i=0; i<8; i++) {
-                        int src = Periph.LastT[i + 1];
-                        chart1.Series[0].Points[i].YValues[0] = (float)src / 10;
+                if(Periph.PythonOnline) {
+                    // Send commands until q is empty
+                    while(CmdQ.Get(out string Cmd)) {
+                        if(Periph.SendCmd(Cmd) == false) goto EndOfTick; // Some failure
                     }
-                    chart1.Refresh();
+                    // Q is empty, Request info
+                    if(Periph.GetInfo()) {
+                        // Show reply
+                        for(int i = 0; i < 8; i++) {
+                            int src = Periph.LastT[i + 1];
+                            chart1.Series[0].Points[i].YValues[0] = (float)src / 10;
+                        }
+                        chart1.Refresh();
+                    }
+                }
+                else { // No answer from Python, ping him
+                    GetParamsFromPython();
                 }
             } //if connected
             // Not connected, try to connect
@@ -146,6 +211,13 @@ namespace PythonControl {
             ProcessState();
         } //timerHeartBeat_Tick
 
+        private void BtnTLimits_Click(object sender, EventArgs e) {
+            if(CheckTextBox(TxtbTLimitBottom, TBottom, TTop, out int TB) && CheckTextBox(TxtbTLimitTop, TBottom, TTop, out int TT)) {
+                chart1.ChartAreas[0].AxisY.Minimum = TB;
+                chart1.ChartAreas[0].AxisY.Maximum = TT;
+            }
+        }
+
         // ==== Checkboxes ====
         private byte Checkbox2Channel(CheckBox cb) {
             string S = cb.Tag.ToString();
@@ -165,122 +237,67 @@ namespace PythonControl {
             byte Msk = (byte)(1 << (8 - Channel));
             if(IsOn) ChnlMsk |= Msk;
             else ChnlMsk &= (byte)~Msk;
-            // Send command
-            if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                CmdQ.Put(CmdSetParam(ParamIDs.SetChannels, ChnlMsk));
-            }
             // Change color
             if(IsOn) chart1.Series[0].Points[Channel - 1].Color = SystemColors.Highlight;
             else chart1.Series[0].Points[Channel - 1].Color = SystemColors.InactiveCaption;
+            // Send command
+            if(AllowUpdate) {
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.SetChannels, ChnlMsk));
+                }
+            }
         }
 
         #region ==== Enable/Disable ====
         private void ChbEnableLeds_CheckedChanged(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
             if(Periph.TransmitterConnected && Periph.PythonOnline) {
                 CmdQ.Put(CmdSetParam(ParamIDs.EnableLeds, chbEnableLeds.Checked? 1 : 0));
             }
         }
 
         private void ChbEnableLR_CheckedChanged(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
             if(Periph.TransmitterConnected && Periph.PythonOnline) {
                 CmdQ.Put(CmdSetParam(ParamIDs.EnableLRs, chbEnableLR.Checked ? 1 : 0));
             }
         }
         #endregion
 
-        #region ==== Frequency ====
+        #region ==== Leds ====
         private void BtnFreqLeds_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(TxtbFreqLeds.Text, out int NewF)) {
-                if(NewF > 0 && NewF <= 255) {
-                    // Send command
-                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetFreq, NewF));
-                    }
+            if(!AllowUpdate) return;
+            if(CheckTextBox(TxtbFreqLeds, 0, 250, out int NewF)) { 
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.SetFreq, NewF));
                 }
             }
         }
 
-        private void TxtbFreqLeds_KeyPress(object sender, KeyPressEventArgs e) {
-            if(e.KeyChar == '\r') BtnFreqLeds_Click(null, null);
-        }
-        #endregion
-
-        #region ==== Top/Bottom temperature selection ====
-        private void BtnTTopLeds_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbTTopLeds.Text, out int NewT)) {
-                if(NewT > TBottom) {
-                    // Send command
-                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetTTopLeds, NewT));
-                    }
-                    // Change chart
-                    chart1.ChartAreas[0].AxisY.Maximum = NewT;
-                    TTop = NewT;
+        private void BtnLedPoint1_Click(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
+            if(CheckTextBox(TxtbLedTPoint1, TBottom, TTop, out int T) && CheckTextBox(TxtbLedPwrPoint1, 0, 100, out int Pwr)) {
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.LedPoint1T, T));
+                    CmdQ.Put(CmdSetParam(ParamIDs.LedPoint1Pwr, Pwr));
                 }
             }
         }
 
-        private void BtnTBottomLeds_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbTBottomLeds.Text, out int NewT)) {
-                if(NewT < TTop) {
-                    // Send command
-                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetTBottomLeds, NewT));
-                    }
-                    // Change chart
-                    chart1.ChartAreas[0].AxisY.Minimum = NewT;
-                    TBottom = NewT;
+        private void BtnLedPoint2_Click(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
+            if(CheckTextBox(TxtbLedTPoint2, TBottom, TTop, out int T) && CheckTextBox(TxtbLedPwrPoint2, 0, 100, out int Pwr)) {
+                if(Periph.TransmitterConnected && Periph.PythonOnline) {
+                    CmdQ.Put(CmdSetParam(ParamIDs.LedPoint2T, T));
+                    CmdQ.Put(CmdSetParam(ParamIDs.LedPoint2Pwr, Pwr));
                 }
             }
-        }
-
-        private void TxtbTTopLeds_KeyPress(object sender, KeyPressEventArgs e) {
-            if(e.KeyChar == '\r') BtnTTopLeds_Click(null, null);
-        }
-
-        private void TxtbTBottomLeds_KeyPress(object sender, KeyPressEventArgs e) {
-            if(e.KeyChar == '\r') BtnTBottomLeds_Click(null, null);
-        }
-        #endregion
-
-        #region ==== Top/Bottom brightness selection ====
-        private void BtnTopBlinkFreq_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbTopLeds.Text, out int NewF)) {
-                if(NewF > FreqBottom) {
-                    // Send command
-                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.EnableLeds, NewF));
-                    }
-                    // Change variable
-                    FreqTop = NewF;
-                }
-            }
-        }
-
-        private void BtnBottomBlinkFreq_Click(object sender, EventArgs e) {
-            if(Int32.TryParse(txtbBottomLeds.Text, out int NewF)) {
-                if(NewF < FreqTop) {
-                    // Send command
-                    if(Periph.TransmitterConnected && Periph.PythonOnline) {
-                        CmdQ.Put(CmdSetParam(ParamIDs.SetLedsBottom, NewF));
-                    }
-                    // Change variable
-                    FreqBottom = NewF;
-                }
-            }
-        }
-
-        private void TxtbTopBlinkFreq_KeyPress(object sender, KeyPressEventArgs e) {
-            if(e.KeyChar == '\r') BtnTopBlinkFreq_Click(null, null);
-        }
-        
-        private void TxtbBottomBlinkFreq_KeyPress(object sender, KeyPressEventArgs e) {
-            if(e.KeyChar == '\r') BtnBottomBlinkFreq_Click(null, null);
         }
         #endregion
 
         #region ======= Laucaringi  =======
         private void BtnLRPoint1_Click(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
             if(CheckTextBox(TxtbLRTPoint1, TBottom, TTop, out int T) && CheckTextBox(TxtbLRPwrPoint1, PwrBottom, PwrTop, out int Pwr)) {
                 if(Periph.TransmitterConnected && Periph.PythonOnline) {
                     CmdQ.Put(CmdSetParam(ParamIDs.LRPoint1T, T));
@@ -290,6 +307,7 @@ namespace PythonControl {
         }
 
         private void BtnLRPoint2_Click(object sender, EventArgs e) {
+            if(!AllowUpdate) return;
             if(CheckTextBox(TxtbLRTPoint2, TBottom, TTop, out int T) && CheckTextBox(TxtbLRPwrPoint2, PwrBottom, PwrTop, out int Pwr)) {
                 if(Periph.TransmitterConnected && Periph.PythonOnline) {
                     CmdQ.Put(CmdSetParam(ParamIDs.LRPoint2T, T));
@@ -340,6 +358,21 @@ namespace PythonControl {
                 return TransmitterConnected;
             }
             else return false;
+        }
+
+        public bool GetParam(ParamIDs ParamID, out int Value) {
+            Value = 0;
+            if(SendAndGetReply("GetParam " + ((byte)ParamID).ToString(), out string SReply)) {
+                string[] Tokens = SReply.Split(new Char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if(Tokens[0].Equals("Param", StringComparison.OrdinalIgnoreCase) && Tokens.Length == 2) {   // "Param" and value
+                    if(int.TryParse(Tokens[1], out Value)) {
+                        PythonOnline = true;
+                        return true;    // parsed properly
+                    }
+                }
+            }
+            PythonOnline = false;
+            return false;
         }
 
         public bool SendCmd(string SCmd) {
