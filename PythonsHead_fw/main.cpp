@@ -122,8 +122,11 @@ int main() {
     LedState.On();
     for(uint8_t i=0; i<LED_CNT; i++) {
         Led[i]->Init();
-        Led[i]->Set(0);
         Led[i]->SetFrequencyHz(4);
+        // Test them one by one
+        Led[i]->Set(100);
+        chThdSleepMilliseconds(450);
+        Led[i]->Set(0);
     }
 
     // Laucaringi
@@ -189,24 +192,18 @@ void App_t::ITask() {
                 uint32_t VRef_adc = Adc.GetResult(ADC_CHNL_VREFINT);
 //                uint32_t Vbat_mv = (156 * Adc.Adc2mV(VBat_adc, VRef_adc)) / 56;   // Resistor divider 56k & 100k
 //                Uart.Printf("VBat_adc: %u; Vref_adc: %u; VBat_mv: %u\r", VBat_adc, VRef_adc, Vbat_mv);
-                uint32_t VLr[LR_CNT];
-                bool Ready = false;
                 for(int i=0; i<LR_CNT; i++) {
                     uint32_t v = Adc.GetResult(AdcChannels[i]);
                     v = Adc.Adc2mV(v, VRef_adc);
                     Filt[i].Put(v);
                     if(Filt[i].IsReady()) {
-                        VLr[i] = Filt[i].GetResult();
+                        uint32_t VLr = Filt[i].GetResult();
                         Filt[i].Flush();
-                        Ready = true;
+                        Lr[i]->Adjust_mV(VLr);
                     }
                 }
 
-                if(Ready) {
 //                    Uart.Printf("%u %u %u %u   %u %u %u %u\r", VLr[0],VLr[1],VLr[2],VLr[3], VLr[4],VLr[5],VLr[6],VLr[7]);
-                    for(int i=0; i<LR_CNT; i++) Lr[i]->Adjust_mV(VLr[i]);
-//                    Lr[0]->Adjust_mV(VLr[0]);
-                }
 //                int32_t Vbat_mv = (2 * Adc.Adc2mV(VBat_adc, VRef_adc));   // Resistor divider
 //                if(Vbat_mv < 3500) SignalEvt(EVT_BATTERY_LOW);
             } // if not big diff
@@ -248,9 +245,10 @@ void LedIndication_t::Process(int16_t *pt) {
 void LRIndication_t::Process(int16_t *pt) {
     if(Enabled) {
         for(int i=0; i<SNS_T_CNT; i++) {
-            if(ChEnabled(i)) { // Check if this channel required
+            if(ChEnabled(i) and (i==0 or i==(SNS_T_CNT-1)))  { // Check if this channel required, enable only first and last
                 int32_t Pwr = CalcProportion(Point1.T, Point2.T, Point1.Pwr, Point2.Pwr, pt[i]);
                 Lr[i]->SetTarget_mV(Pwr);
+                Uart.Printf("LR %d: %d mv\r", i, Pwr);
             }
             else Lr[i]->SetTarget_mV(0);
         }

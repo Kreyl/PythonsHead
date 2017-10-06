@@ -56,14 +56,14 @@
 // LEDs
 #define LED_PIN         GPIOB, 9, omPushPull
 #define LED_TOP_BRT     100
-#define LED_1           { GPIOB, 4,  TIM3, 1, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_2           { GPIOB, 5,  TIM3, 2, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_3           { GPIOB, 0,  TIM3, 3, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_4           { GPIOB, 1,  TIM3, 4, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_5           { GPIOD, 12, TIM4, 1, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_6           { GPIOD, 13, TIM4, 2, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_7           { GPIOD, 14, TIM4, 3, invInverted, omPushPull, LED_TOP_BRT }
-#define LED_8           { GPIOD, 15, TIM4, 4, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_7           { GPIOB, 4,  TIM3, 1, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_8           { GPIOB, 5,  TIM3, 2, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_6           { GPIOB, 0,  TIM3, 3, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_5           { GPIOB, 1,  TIM3, 4, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_3           { GPIOD, 12, TIM4, 1, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_4           { GPIOD, 13, TIM4, 2, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_2           { GPIOD, 14, TIM4, 3, invInverted, omPushPull, LED_TOP_BRT }
+#define LED_1           { GPIOD, 15, TIM4, 4, invInverted, omPushPull, LED_TOP_BRT }
 
 // Laucaringi
 #define LR_PWM_TOP      255
