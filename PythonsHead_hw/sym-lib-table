@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name OpAmp_kl)(type Legacy)(uri ${KICAD_SYMBOL_DIR}/OpAmp_kl.lib)(options "")(descr ""))
+)

@@ -6,3 +6,4 @@ Python_sw/PythonControl/bin/
 Python_sw/PythonControl/obj/Debug/PythonControl.MainForm.resources
 Python_sw/PythonControl/obj/
 PythonsHead_fw/.settings/language.settings.xml
+*.kicad_pcb-bak
