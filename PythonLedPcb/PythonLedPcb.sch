@@ -1973,7 +1973,7 @@ F 5 "0" H 4450 2750 60  0001 C CNN "SolderPoints"
 	1    4750 2600
 	1    0    0    -1  
 $EndComp
-NoConn ~ 5000 2450
+NoConn ~ 5050 2600
 $Comp
 L pcb_details:Logo Logo1
 U 1 1 5AA46E8B

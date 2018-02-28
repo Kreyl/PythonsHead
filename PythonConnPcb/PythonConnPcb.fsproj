@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************-->
+<!--   File    : PythonConnPcb.fsproj    -->
+<!--   Format  : TopoR Project file      -->
+<!--   Version : 2                       -->
+<!--   Program : TopoR Lite 6.3.18186    -->
+<!--   Date    : Thursday, March 1, 2018 -->
+<!--   Time    : 01:12                   -->
+<!--*************************************-->
+
+<Project>
+   <Version current="2"/>
+   <GUID>{36ED248A-204A-4D49-978A-46869A512137}</GUID>
+   <Documents>
+      <Section name="PCB">
+         <File path=".\PythonConnPcb.fsx" isopened="1" dateChange="2018-03-01 00:38:24"/>
+      </Section>
+      <Section name="AutoRouting"/>
+   </Documents>
+</Project>

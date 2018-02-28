@@ -15,82 +15,59 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Connectors_kl:BARREL_SOCKET XL1
-U 1 1 5A9CEB8C
-P 1950 1500
-F 0 "XL1" H 1800 1750 60  0000 C CNN
-F 1 "BARREL_SOCKET" V 1650 1500 60  0000 C CNN
-F 2 "Connectors:Barrel" H 1950 1500 60  0001 C CNN
-F 3 "" H 1950 1500 60  0000 C CNN
-F 4 "http://www.zip-2002.ru/razyemy/razyemy_pitaniya_shtyrkovye/79546/dc-005_2.0mm/" H 1950 1500 60  0001 C CNN "URL"
-F 5 "7.2" H 1950 1500 60  0001 C CNN "Price"
-	1    1950 1500
-	1    0    0    -1  
-$EndComp
-NoConn ~ 2150 1600
-$Comp
 L power:GNDPWR #PWR03
 U 1 1 5A9CEB94
-P 1850 2000
-F 0 "#PWR03" H 1850 2050 40  0001 C CNN
-F 1 "GNDPWR" H 1850 1920 40  0001 C CNN
-F 2 "" H 1850 2000 60  0000 C CNN
-F 3 "" H 1850 2000 60  0000 C CNN
-	1    1850 2000
+P 6800 2950
+F 0 "#PWR03" H 6800 3000 40  0001 C CNN
+F 1 "GNDPWR" H 6800 2870 40  0001 C CNN
+F 2 "" H 6800 2950 60  0000 C CNN
+F 3 "" H 6800 2950 60  0000 C CNN
+	1    6800 2950
 	-1   0    0    -1  
 $EndComp
-Text Label 2550 1400 2    60   ~ 0
-PWR_EXT
-Text Notes 850  1600 0    60   ~ 0
-External Power\nConnector
 $Comp
 L Tittar_kl:R R1
 U 1 1 5A9CEB9E
-P 2750 1750
-F 0 "R1" V 2830 1600 50  0000 C CNN
-F 1 "2R0" V 2750 1750 50  0000 C CNN
-F 2 "Resistors:RES_0603" V 2830 1850 28  0001 C CNN
-F 3 "" V 2830 1600 60  0000 C CNN
-F 4 "0.5" V 2930 1700 60  0001 C CNN "Price"
-F 5 "2" V 3030 1800 60  0001 C CNN "SolderPoints"
-	1    2750 1750
-	1    0    0    -1  
+P 2000 1700
+F 0 "R1" V 2080 1550 50  0000 C CNN
+F 1 "2R0" V 2000 1700 50  0000 C CNN
+F 2 "Resistors:RES_0603" V 2080 1800 28  0001 C CNN
+F 3 "" V 2080 1550 60  0000 C CNN
+F 4 "0.5" V 2180 1650 60  0001 C CNN "Price"
+F 5 "2" V 2280 1750 60  0001 C CNN "SolderPoints"
+	1    2000 1700
+	-1   0    0    1   
 $EndComp
 $Comp
 L Tittar_kl:C C1
 U 1 1 5A9CEBA7
-P 2750 2300
-F 0 "C1" H 2650 2200 50  0000 L CNN
-F 1 "2u2 20V" H 2650 2400 50  0000 L CNN
-F 2 "Capacitors:CAP_0603" V 2850 2150 28  0001 C BNN
-F 3 "" H 2650 2200 60  0001 C CNN
-F 4 "0.5" H 2750 2300 60  0001 C CNN "Price"
-F 5 "2" H 2850 2400 60  0001 C CNN "SolderPoints"
-	1    2750 2300
-	1    0    0    -1  
+P 2000 1150
+F 0 "C1" H 1900 1050 50  0000 L CNN
+F 1 "2u2" H 1900 1250 50  0000 L CNN
+F 2 "Capacitors:CAP_0603" V 2100 1000 28  0001 C BNN
+F 3 "" H 1900 1050 60  0001 C CNN
+F 4 "0.5" H 2000 1150 60  0001 C CNN "Price"
+F 5 "2" H 2100 1250 60  0001 C CNN "SolderPoints"
+	1    2000 1150
+	-1   0    0    1   
 $EndComp
 $Comp
 L power:GNDPWR #PWR05
 U 1 1 5A9CEBAE
-P 2750 2600
-F 0 "#PWR05" H 2750 2650 40  0001 C CNN
-F 1 "GNDPWR" H 2750 2520 40  0001 C CNN
-F 2 "" H 2750 2600 60  0000 C CNN
-F 3 "" H 2750 2600 60  0000 C CNN
-	1    2750 2600
-	1    0    0    -1  
+P 2000 850
+F 0 "#PWR05" H 2000 900 40  0001 C CNN
+F 1 "GNDPWR" H 2000 770 40  0001 C CNN
+F 2 "" H 2000 850 60  0000 C CNN
+F 3 "" H 2000 850 60  0000 C CNN
+	1    2000 850 
+	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	1850 2000 1850 1900
+	6800 2950 6800 2850
 Wire Wire Line
-	2750 2100 2750 2000
+	2000 1350 2000 1450
 Wire Wire Line
-	2750 2600 2750 2500
-Wire Wire Line
-	2750 1500 2750 1400
-Connection ~ 2750 1400
-Wire Wire Line
-	2150 1400 2750 1400
+	2000 850  2000 950 
 $Bitmap
 Pos 10300 5750
 Scale 1.000000
@@ -1984,47 +1961,27 @@ NoConn ~ 1800 4600
 $Comp
 L Connectors_kl:CONN_8 XL2
 U 1 1 5AAF4360
-P 4950 2050
-F 0 "XL2" H 5077 2107 50  0000 L CNN
-F 1 "WB-08" H 5077 2016 50  0000 L CNN
-F 2 "Connectors:WB-08(MW-8M)" H 4950 2050 60  0001 C CNN
-F 3 "" H 4950 2050 60  0000 C CNN
-F 4 "http://www.zip-2002.ru/razyemy/razyemy_pitaniya_nizkovoltnye/59686/wb-08_(mw-8m)_pitch_2.00mm/" H 4950 2050 50  0001 C CNN "URL"
-F 5 "2" H 4950 2050 50  0001 C CNN "Price"
-	1    4950 2050
-	1    0    0    -1  
+P 2850 2100
+F 0 "XL2" H 2977 2157 50  0000 L CNN
+F 1 "WB-08" H 2977 2066 50  0000 L CNN
+F 2 "Connectors:WB-08(MW-8M)" H 2850 2100 60  0001 C CNN
+F 3 "" H 2850 2100 60  0000 C CNN
+F 4 "http://www.zip-2002.ru/razyemy/razyemy_pitaniya_nizkovoltnye/59686/wb-08_(mw-8m)_pitch_2.00mm/" H 2850 2100 50  0001 C CNN "URL"
+F 5 "2" H 2850 2100 50  0001 C CNN "Price"
+	1    2850 2100
+	1    0    0    1   
 $EndComp
 $Comp
 L power:GNDPWR #PWR06
 U 1 1 5AAF4444
-P 4650 2550
-F 0 "#PWR06" H 4650 2600 40  0001 C CNN
-F 1 "GNDPWR" H 4650 2470 40  0001 C CNN
-F 2 "" H 4650 2550 60  0000 C CNN
-F 3 "" H 4650 2550 60  0000 C CNN
-	1    4650 2550
-	1    0    0    -1  
+P 2000 2850
+F 0 "#PWR06" H 2000 2900 40  0001 C CNN
+F 1 "GNDPWR" H 2000 2770 40  0001 C CNN
+F 2 "" H 2000 2850 60  0000 C CNN
+F 3 "" H 2000 2850 60  0000 C CNN
+	1    2000 2850
+	-1   0    0    -1  
 $EndComp
-Wire Wire Line
-	4650 2300 4750 2300
-Wire Wire Line
-	4650 2300 4650 2400
-Wire Wire Line
-	4750 2400 4650 2400
-Connection ~ 4650 2400
-Wire Wire Line
-	4650 2400 4650 2550
-Wire Wire Line
-	4650 1400 4650 1700
-Wire Wire Line
-	4650 1700 4750 1700
-Wire Wire Line
-	2750 1400 4650 1400
-Wire Wire Line
-	4750 1800 4650 1800
-Wire Wire Line
-	4650 1800 4650 1700
-Connection ~ 4650 1700
 Text Label 2800 3400 0    50   ~ 0
 R
 Text Label 2800 3550 0    50   ~ 0
@@ -2037,26 +1994,26 @@ Wire Wire Line
 	2800 3550 2650 3550
 Wire Wire Line
 	2650 3400 2800 3400
-Text Label 4600 1900 2    50   ~ 0
+Text Label 2500 1950 2    50   ~ 0
 R
-Text Label 4600 2000 2    50   ~ 0
+Text Label 2500 1850 2    50   ~ 0
 G
-Text Label 4600 2100 2    50   ~ 0
+Text Label 2500 1750 2    50   ~ 0
 B
 Wire Wire Line
-	4750 2100 4600 2100
+	2650 1750 2500 1750
 Wire Wire Line
-	4600 2000 4750 2000
+	2500 1850 2650 1850
 Wire Wire Line
-	4750 1900 4600 1900
+	2650 1950 2500 1950
 Text Label 2550 4700 0    50   ~ 0
 OnOff
 Wire Wire Line
 	2550 4700 2400 4700
-Text Label 4600 2200 2    50   ~ 0
+Text Label 2500 2050 2    50   ~ 0
 OnOff
 Wire Wire Line
-	4600 2200 4750 2200
+	2500 2050 2650 2050
 $Comp
 L pcb_details:HOLE_METALLED HOLE1
 U 1 1 5A91E7F6
@@ -2084,26 +2041,6 @@ F 5 "0" H 5000 5150 60  0001 C CNN "SolderPoints"
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GNDPWR #PWR07
-U 1 1 5A91F107
-P 5900 5150
-F 0 "#PWR07" H 5900 5200 40  0001 C CNN
-F 1 "GNDPWR" H 5900 5070 40  0001 C CNN
-F 2 "" H 5900 5150 60  0000 C CNN
-F 3 "" H 5900 5150 60  0000 C CNN
-	1    5900 5150
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5600 5000 5900 5000
-Connection ~ 5900 5000
-Wire Wire Line
-	5900 5000 5900 5150
-Wire Wire Line
-	5900 4550 5600 4550
-Wire Wire Line
-	5900 4550 5900 5000
-$Comp
 L pcb_details:Logo Logo1
 U 1 1 5A920942
 P 7500 5700
@@ -2114,4 +2051,85 @@ F 3 "" H 7500 5700 60  0000 C CNN
 	1    7500 5700
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connectors_kl:USB_MINI_B XL1
+U 1 1 5A97267E
+P 1700 2350
+F 0 "XL1" H 1601 2837 60  0000 C CNN
+F 1 "USB_Micro_B" H 1601 2731 60  0000 C CNN
+F 2 "Connectors:USBmicro_MOLEX_WM17142" H 1601 2731 60  0001 C CNN
+F 3 "" H 1700 2350 60  0000 C CNN
+F 4 "11" H 1700 2350 50  0001 C CNN "SolderPoints"
+F 5 "47491-0001 MOLEX" H 1700 2350 50  0001 C CNN "PN"
+F 6 "55" H 1700 2350 50  0001 C CNN "Price"
+F 7 "https://www.terraelectronica.ru/catalog_info.php?CODE=281706" H 1700 2350 50  0001 C CNN "URL"
+	1    1700 2350
+	1    0    0    -1  
+$EndComp
+NoConn ~ 1350 2850
+NoConn ~ 1450 2850
+NoConn ~ 1550 2850
+NoConn ~ 1650 2850
+Wire Wire Line
+	1900 2450 2000 2450
+Wire Wire Line
+	2000 2450 2000 2550
+Wire Wire Line
+	2000 2550 1900 2550
+Wire Wire Line
+	2000 2450 2650 2450
+Connection ~ 2000 2450
+Wire Wire Line
+	1900 2350 2650 2350
+Wire Wire Line
+	2650 2250 1900 2250
+Wire Wire Line
+	1900 2150 2000 2150
+Wire Wire Line
+	2000 2550 2000 2850
+Connection ~ 2000 2550
+Wire Wire Line
+	2000 1950 2000 2150
+Connection ~ 2000 2150
+Wire Wire Line
+	2000 2150 2250 2150
+$Comp
+L Tittar_kl:C C2
+U 1 1 5A979A3B
+P 2250 1150
+F 0 "C2" H 2150 1050 50  0000 L CNN
+F 1 "10n" H 2150 1250 50  0000 L CNN
+F 2 "Capacitors:CAP_0603" V 2350 1000 28  0001 C BNN
+F 3 "" H 2150 1050 60  0001 C CNN
+F 4 "0.5" H 2250 1150 60  0001 C CNN "Price"
+F 5 "2" H 2350 1250 60  0001 C CNN "SolderPoints"
+	1    2250 1150
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GNDPWR #PWR07
+U 1 1 5A979A41
+P 2250 850
+F 0 "#PWR07" H 2250 900 40  0001 C CNN
+F 1 "GNDPWR" H 2250 770 40  0001 C CNN
+F 2 "" H 2250 850 60  0000 C CNN
+F 3 "" H 2250 850 60  0000 C CNN
+	1    2250 850 
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2250 850  2250 950 
+Wire Wire Line
+	2250 1350 2250 2150
+Connection ~ 2250 2150
+Wire Wire Line
+	2250 2150 2650 2150
+NoConn ~ 5600 4550
+NoConn ~ 5600 5000
+Text Label 2350 2250 0    50   ~ 0
+D-
+Text Label 2350 2350 0    50   ~ 0
+D+
+Text Label 2350 2150 0    50   ~ 0
+5V
 $EndSCHEMATC
