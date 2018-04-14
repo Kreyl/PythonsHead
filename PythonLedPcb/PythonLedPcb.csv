@@ -1,0 +1,5 @@
+Reference, Value, Footprint, Quantity, Price, SolderPoints, Color, PN, URL, Sum
+D1 D2 D3 D4 ,KPT-1608ZGC,LEDs:LED_0603,4,17,2,Green,KPT-1608ZGC,https://www.terraelectronica.ru/product/348874
+HOLE1 HOLE2 ,HOLE_METALLED,PCB:Hole3d3_out5d5mm,2,0,0,,,
+Logo1 ,Logo,Pictures:Ostranna_8x8,1
+XL1 ,CONN_5,Connectors:WB-05R(MW-5MR),1,2,5,,,http://www.zip-2002.ru/razyemy/razyemy_pitaniya_nizkovoltnye/59698/wb-05r_(mw-5mr)_pitch_2.00_m/

@@ -1,0 +1,10 @@
+Reference, Value, Footprint, Quantity, Price, SolderPoints, URL, PN, Sum
+C1 ,2u2,Capacitors:CAP_0603,1,0.5,2,,
+C2 ,10n,Capacitors:CAP_0603,1,0.5,2,,
+HOLE1 HOLE2 ,HOLE_METALLED,PCB:Hole3_5_out6mm,2,0,0,,
+Logo1 ,Logo,Pictures:Ostranna_8x8,1
+Q1 ,LED_5050,LEDs:LED_5050,1,7,6,,
+R1 ,2R0,Resistors:RES_0603,1,0.5,2,,
+SW1 ,SS-12F23,BtnsSwitches:SW_SS-12F23,1,15,,http://www.quartz1.com/price/model.php?group=1505&ext=563,Q-563(SS-12F23)
+XL1 ,USB_Micro_B,Connectors:USBmicro_MOLEX_WM17142,1,55,11,https://www.terraelectronica.ru/catalog_info.php?CODE=281706,47491-0001 MOLEX
+XL2 ,WB-08,Connectors:WB-08(MW-8M),1,2,,http://www.zip-2002.ru/razyemy/razyemy_pitaniya_nizkovoltnye/59686/wb-08_(mw-8m)_pitch_2.00mm/,

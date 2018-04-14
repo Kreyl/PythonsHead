@@ -4,8 +4,8 @@
 <!--   Format  : TopoR Project file      -->
 <!--   Version : 2                       -->
 <!--   Program : TopoR Lite 6.3.18186    -->
-<!--   Date    : Thursday, March 1, 2018 -->
-<!--   Time    : 01:12                   -->
+<!--   Date    : Thursday, March 8, 2018 -->
+<!--   Time    : 16:07                   -->
 <!--*************************************-->
 
 <Project>
@@ -13,7 +13,7 @@
    <GUID>{36ED248A-204A-4D49-978A-46869A512137}</GUID>
    <Documents>
       <Section name="PCB">
-         <File path=".\PythonConnPcb.fsx" isopened="1" dateChange="2018-03-01 00:38:24"/>
+         <File path=".\PythonConnPcb.fsx" isopened="0" dateChange="2018-03-01 00:57:51"/>
       </Section>
       <Section name="AutoRouting"/>
    </Documents>

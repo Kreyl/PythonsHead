@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>D:\Nute\PresentTime\Python\PythonLedPcb\PythonLedPcb.sch</source>
+    <date>02.03.2018 13:32:12</date>
+    <tool>Eeschema (2018-02-15 revision 29b28de31)-makepkg</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>PythonLedPcb.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="D1">
+      <value>KPT-1608ZGC</value>
+      <footprint>LEDs:LED_0603</footprint>
+      <fields>
+        <field name="Price">17</field>
+        <field name="SolderPoints">2</field>
+        <field name="Color">Green</field>
+        <field name="PN">KPT-1608ZGC</field>
+        <field name="URL">https://www.terraelectronica.ru/product/348874</field>
+      </fields>
+      <libsource lib="Tittar_kl" part="LED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5A995269</tstamp>
+    </comp>
+    <comp ref="D2">
+      <value>KPT-1608ZGC</value>
+      <footprint>LEDs:LED_0603</footprint>
+      <fields>
+        <field name="Price">17</field>
+        <field name="SolderPoints">2</field>
+        <field name="Color">Green</field>
+        <field name="PN">KPT-1608ZGC</field>
+        <field name="URL">https://www.terraelectronica.ru/product/348874</field>
+      </fields>
+      <libsource lib="Tittar_kl" part="LED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5A995354</tstamp>
+    </comp>
+    <comp ref="D3">
+      <value>KPT-1608ZGC</value>
+      <footprint>LEDs:LED_0603</footprint>
+      <fields>
+        <field name="Price">17</field>
+        <field name="SolderPoints">2</field>
+        <field name="Color">Green</field>
+        <field name="PN">KPT-1608ZGC</field>
+        <field name="URL">https://www.terraelectronica.ru/product/348874</field>
+      </fields>
+      <libsource lib="Tittar_kl" part="LED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5A9953C3</tstamp>
+    </comp>
+    <comp ref="D4">
+      <value>KPT-1608ZGC</value>
+      <footprint>LEDs:LED_0603</footprint>
+      <fields>
+        <field name="Price">17</field>
+        <field name="SolderPoints">2</field>
+        <field name="Color">Green</field>
+        <field name="PN">KPT-1608ZGC</field>
+        <field name="URL">https://www.terraelectronica.ru/product/348874</field>
+      </fields>
+      <libsource lib="Tittar_kl" part="LED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5A9953CE</tstamp>
+    </comp>
+    <comp ref="XL1">
+      <value>CONN_5</value>
+      <footprint>Connectors:WB-05R(MW-5MR)</footprint>
+      <fields>
+        <field name="URL">http://www.zip-2002.ru/razyemy/razyemy_pitaniya_nizkovoltnye/59698/wb-05r_(mw-5mr)_pitch_2.00_m/</field>
+        <field name="Price">2</field>
+        <field name="SolderPoints">5</field>
+      </fields>
+      <libsource lib="Connectors_kl" part="CONN_5"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5A99541D</tstamp>
+    </comp>
+    <comp ref="HOLE1">
+      <value>HOLE_METALLED</value>
+      <footprint>PCB:Hole3d3_out5d5mm</footprint>
+      <fields>
+        <field name="Price">0</field>
+        <field name="SolderPoints">0</field>
+      </fields>
+      <libsource lib="pcb_details" part="HOLE_METALLED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AA46666</tstamp>
+    </comp>
+    <comp ref="HOLE2">
+      <value>HOLE_METALLED</value>
+      <footprint>PCB:Hole3d3_out5d5mm</footprint>
+      <fields>
+        <field name="Price">0</field>
+        <field name="SolderPoints">0</field>
+      </fields>
+      <libsource lib="pcb_details" part="HOLE_METALLED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AA469E2</tstamp>
+    </comp>
+    <comp ref="Logo1">
+      <value>Logo</value>
+      <footprint>Pictures:Ostranna_8x8</footprint>
+      <libsource lib="pcb_details" part="Logo"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AA46E8B</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connectors_kl" part="CONN_5">
+      <description>Symbole general de connecteur</description>
+      <fields>
+        <field name="Reference">XL</field>
+        <field name="Value">CONN_5</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+        <pin num="3" name="~" type="passive"/>
+        <pin num="4" name="~" type="passive"/>
+        <pin num="5" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="pcb_details" part="HOLE_METALLED">
+      <footprints>
+        <fp>HOLE*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">HOLE</field>
+        <field name="Value">HOLE_METALLED</field>
+        <field name="Price">0</field>
+        <field name="SolderPoints">0</field>
+      </fields>
+      <pins>
+        <pin num="H" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Tittar_kl" part="LED">
+      <footprints>
+        <fp>LED*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+        <field name="Price">4</field>
+        <field name="SolderPoints">2</field>
+        <field name="Color">Green</field>
+      </fields>
+      <pins>
+        <pin num="A" name="A" type="passive"/>
+        <pin num="C" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="pcb_details" part="Logo">
+      <fields>
+        <field name="Reference">Logo</field>
+        <field name="Value">Logo</field>
+      </fields>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connectors_kl">
+      <uri>D:\Libs\Kicad/Connectors_kl.lib</uri>
+    </library>
+    <library logical="Tittar_kl">
+      <uri>D:\Libs\Kicad/Tittar_kl.lib</uri>
+    </library>
+    <library logical="pcb_details">
+      <uri>D:\Libs\Kicad/pcb_details.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Net-(D3-PadA)">
+      <node ref="XL1" pin="4"/>
+      <node ref="D3" pin="A"/>
+    </net>
+    <net code="2" name="Net-(D4-PadA)">
+      <node ref="XL1" pin="5"/>
+      <node ref="D4" pin="A"/>
+    </net>
+    <net code="3" name="Net-(HOLE1-PadH)">
+      <node ref="HOLE1" pin="H"/>
+    </net>
+    <net code="4" name="Net-(HOLE2-PadH)">
+      <node ref="HOLE2" pin="H"/>
+    </net>
+    <net code="5" name="Net-(D1-PadC)">
+      <node ref="XL1" pin="1"/>
+      <node ref="D4" pin="C"/>
+      <node ref="D3" pin="C"/>
+      <node ref="D2" pin="C"/>
+      <node ref="D1" pin="C"/>
+    </net>
+    <net code="6" name="Net-(D2-PadA)">
+      <node ref="XL1" pin="3"/>
+      <node ref="D2" pin="A"/>
+    </net>
+    <net code="7" name="Net-(D1-PadA)">
+      <node ref="D1" pin="A"/>
+      <node ref="XL1" pin="2"/>
+    </net>
+  </nets>
+</export>
